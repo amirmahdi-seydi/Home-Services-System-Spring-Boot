@@ -30,13 +30,9 @@ public class Specialist extends User {
     @Column(name = "PROFILE_IMAGE")
     private byte[] profileImage;
 
-    @ManyToMany(mappedBy = "specialists",
-            cascade = CascadeType.ALL)
-    private Set<Service> services;
-
-//    @ManyToMany(mappedBy = "specialists",
-//            cascade = CascadeType.ALL)
-//    private Set<Category> categories;
+    @OneToMany(mappedBy = "specialist"
+            , cascade = CascadeType.ALL)
+    private Set<SpecialistService> specialistService;
 
     @OneToMany(mappedBy = "specialist",
             cascade = CascadeType.ALL)

@@ -22,19 +22,19 @@ import java.util.Set;
 @Table(name = "SERVICE")
 public class Service extends BaseEntity<Long> {
 
-    @Column(name = "name",
+    @Column(name = "NAME",
             nullable = false)
     private String name;
 
-    @Column(name = "description",
+    @Column(name = "DESCRIPTION",
             nullable = false)
     private String description;
 
-    @Column(name = "base_price",
+    @Column(name = "BASE_PRICE",
             nullable = false)
     private BigDecimal basePrice;
 
-    @Column(name = "optional_description",
+    @Column(name = "OPTIONAL_DESCRIPTION",
             length = 200)
     private String optionalDescription;
 
@@ -42,14 +42,11 @@ public class Service extends BaseEntity<Long> {
     @JoinColumn(name = "CETEGORY_ID", nullable = false)
     private Category category;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "SERVICE_SPECIALIST",
-            joinColumns = @JoinColumn(name = "service_id"),
-            inverseJoinColumns = @JoinColumn(name = "specialist_id"))
-    private Set<Specialist> specialists;
-
     @OneToMany(mappedBy = "service",
             cascade = CascadeType.ALL)
     private Set<Order> orders;
+
+    @OneToMany(mappedBy = "service",
+            cascade = CascadeType.ALL)
+    private Set<SpecialistService> specialistService;
 }
