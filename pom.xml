@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ir.maktab</groupId>
 	<artifactId>homeservice</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>home service</name>
 	<description>Home Services Project </description>
 	<properties>
