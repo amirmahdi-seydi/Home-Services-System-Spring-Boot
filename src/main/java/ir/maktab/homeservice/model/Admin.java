@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -21,6 +22,8 @@ import javax.persistence.Entity;
 @DiscriminatorValue("admin")
 public class Admin extends User{
 
-    @Column(name = "IS_SUPER_ADMIN")
+    @Column(name = "IS_SUPER_ADMIN",
+            columnDefinition = "smallint")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean isSuperAdmin = false;
 }

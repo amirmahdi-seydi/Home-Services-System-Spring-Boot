@@ -13,6 +13,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 
 @AllArgsConstructor
@@ -26,6 +27,10 @@ public class Transaction extends BaseEntity<Long> {
     @Column(name = "amount",
             nullable = false)
     private BigDecimal amount;
+
+    @Column(name = "UUID",
+            nullable = false)
+    private String uuid = UUID.randomUUID().toString();
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @Column(name = "DATE_OF_TRANSACTION",

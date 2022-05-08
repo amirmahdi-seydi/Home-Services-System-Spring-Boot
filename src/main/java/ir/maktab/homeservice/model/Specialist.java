@@ -21,9 +21,6 @@ import java.util.Set;
 @DiscriminatorValue("specialist")
 public class Specialist extends User {
 
-    @Column(name = "SPECIALITY")
-    private String speciality;
-
     @Column(name = "SCORE")
     private Double score;
 
