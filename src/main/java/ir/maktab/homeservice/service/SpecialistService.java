@@ -5,8 +5,11 @@ package ir.maktab.homeservice.service;
 
 import ir.maktab.homeservice.model.Specialist;
 import ir.maktab.homeservice.service.base.BaseService;
+import ir.maktab.homeservice.service.dto.SpecialistDTO;
+import ir.maktab.homeservice.service.dto.extra.SecureSpecialistDTO;
 
 
 public interface SpecialistService extends BaseService<Specialist, Long> {
 
+    SecureSpecialistDTO save(SpecialistDTO specialistDTO);
 }
