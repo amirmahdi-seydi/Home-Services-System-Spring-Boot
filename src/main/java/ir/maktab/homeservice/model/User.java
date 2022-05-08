@@ -13,6 +13,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Entity
@@ -44,9 +45,9 @@ public abstract class User extends BaseEntity<Long> {
             unique = true)
     private String userName;
 
-    @Column(name = "PASSWORD",
+    @Column(name = "HASHED_PASSWORD",
             nullable = false)
-    private byte[] password;
+    private byte[] hashedPassword;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @Column(name = "DATE_OF_REGISTRATION",
@@ -69,4 +70,10 @@ public abstract class User extends BaseEntity<Long> {
 
     @Column(name = "user_type", insertable = false, updatable = false)
     private String userType;
+
+    @Column(name = "IS_ACTIVE",
+            nullable = false,
+            columnDefinition = "smallint")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private Boolean isActive = false;
 }

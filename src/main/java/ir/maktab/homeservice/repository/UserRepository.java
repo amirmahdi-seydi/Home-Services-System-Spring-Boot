@@ -13,14 +13,14 @@ public interface UserRepository extends UserBaseRepository<User> {
 
     Boolean existsByUserName(String userName);
 
-    Boolean existsByEmail(String email);
+    Boolean existsByEmailAddress(String email);
 
-    Boolean existsByPhoneNumber(String phoneNumber);
+    Boolean existsByMobileNumber(String phoneNumber);
 
     @Query("select u.userType from User u where u.userName = :userName")
     UserType findUserTypeByUserName(String userName);
 
-    @Query("select u.password from User u where u.userName = ?1")
+    @Query("select u.hashedPassword from User u where u.userName = ?1")
     byte[] findPassword(String userName);
 
 }
