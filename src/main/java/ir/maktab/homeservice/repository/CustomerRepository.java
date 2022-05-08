@@ -5,7 +5,17 @@ package ir.maktab.homeservice.repository;
 
 import ir.maktab.homeservice.model.Customer;
 import ir.maktab.homeservice.repository.base.UserBaseRepository;
+import ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 
 public interface CustomerRepository extends UserBaseRepository<Customer> {
+
+    @Query("select new ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO(" +
+            "c.id, c.firstName, c.lastName, c.emailAddress," +
+            " c.isActive, c.dateOfRegistration,c.userName, c.mobileNumber, c.userState)" +
+            " from Customer c order by c.id")
+    List<SecureCustomerDTO> fetchAllCustomerDTOS();
 }

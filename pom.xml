@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ir.maktab</groupId>
 	<artifactId>homeservice</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<name>home service</name>
 	<description>Home Services Project </description>
 	<properties>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-crypto</artifactId>
-			<version>5.6.2</version>
+			<version>LATEST</version>
 		</dependency>
 
 		<dependency>
@@ -59,11 +59,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 	</dependencies>
