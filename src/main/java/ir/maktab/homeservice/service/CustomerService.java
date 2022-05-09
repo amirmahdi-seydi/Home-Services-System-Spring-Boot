@@ -15,7 +15,5 @@ public interface CustomerService extends BaseService<Customer, Long> {
 
     SecureCustomerDTO save(CustomerDTO customerDTO);
 
-    SecureCustomerDTO update(SecureCustomerDTO secureCustomerDTO);
-
     List<SecureCustomerDTO> fetchAllCustomer();
 }
