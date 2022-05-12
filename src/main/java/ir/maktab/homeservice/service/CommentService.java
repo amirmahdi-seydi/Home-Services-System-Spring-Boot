@@ -9,4 +9,5 @@ import ir.maktab.homeservice.service.base.BaseService;
 
 public interface CommentService extends BaseService<Comment, Long> {
 
+
 }

@@ -7,7 +7,10 @@ import ir.maktab.homeservice.model.Comment;
 import ir.maktab.homeservice.repository.CommentRepository;
 import ir.maktab.homeservice.service.CommentService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class CommentServiceImpl extends BaseServiceImpl<Comment, Long, CommentRepository>
         implements CommentService {
 

@@ -9,4 +9,10 @@ import ir.maktab.homeservice.service.base.BaseService;
 
 public interface CategoryService extends BaseService<Category, Long> {
 
+    @Override
+    Category save(Category category);
+
+    Category findCategoryByCategoryName(String name);
+
+    Boolean existByCategoryName(String name);
 }
