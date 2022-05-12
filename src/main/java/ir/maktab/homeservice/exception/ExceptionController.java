@@ -7,9 +7,11 @@ package ir.maktab.homeservice.exception;
 import ir.maktab.homeservice.service.dto.extra.request.ErrorDTO;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
 import java.nio.file.AccessDeniedException;
@@ -20,7 +22,28 @@ public class ExceptionController {
 
     @ExceptionHandler(AlreadyExistException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorDTO getWrongCredentialsException(AlreadyExistException ex, WebRequest request) {
+    public ErrorDTO getAlreadyExistException(AlreadyExistException ex, WebRequest request) {
+        return new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+    }
+
+    @ExceptionHandler(WrongCredentialsException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorDTO getWrongCredentialsException(WrongCredentialsException ex, WebRequest request) {
+        return new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+    }
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorDTO getMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
         return new ErrorDTO(
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST,
@@ -61,7 +84,7 @@ public class ExceptionController {
 
     @ExceptionHandler(value = UnacceptableException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorDTO getRegistrationIllegalStatement(UnacceptableException ex, WebRequest request) {
+    public ErrorDTO getUnacceptableException(UnacceptableException ex, WebRequest request) {
         return new ErrorDTO(
                 ex.getMessage(),
                 HttpStatus.BAD_REQUEST,
@@ -80,9 +103,20 @@ public class ExceptionController {
         );
     }
 
+
     @ExceptionHandler(value = IllegalIdentifierException.class)
     @ResponseStatus(value = HttpStatus.EXPECTATION_FAILED)
-    public ErrorDTO getDateException(IllegalIdentifierException ex, WebRequest request) {
+    public ErrorDTO getIllegalIdentifierException(IllegalIdentifierException ex, WebRequest request) {
+        return new ErrorDTO(
+                ex.getMessage(),
+                HttpStatus.EXPECTATION_FAILED,
+                ZonedDateTime.now()
+        );
+    }
+
+    @ExceptionHandler(value = FinancialBalanceException.class)
+    @ResponseStatus(value = HttpStatus.EXPECTATION_FAILED)
+    public ErrorDTO getFinancialBalanceException(FinancialBalanceException ex, WebRequest request) {
         return new ErrorDTO(
                 ex.getMessage(),
                 HttpStatus.EXPECTATION_FAILED,
