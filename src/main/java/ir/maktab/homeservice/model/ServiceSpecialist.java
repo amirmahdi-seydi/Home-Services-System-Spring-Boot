@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "SPECIALIST_SERVICE")
-public class SpecialistService extends BaseEntity<Long> {
+public class ServiceSpecialist extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specialist_id", nullable = false)
@@ -23,7 +23,7 @@ public class SpecialistService extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
-    private Service services;
+    private Service service;
 
 
 }
