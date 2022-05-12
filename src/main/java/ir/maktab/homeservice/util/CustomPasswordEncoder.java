@@ -7,6 +7,8 @@ package ir.maktab.homeservice.util;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.nio.charset.StandardCharsets;
+
 public class CustomPasswordEncoder {
 
     private static PasswordEncoder encoder;
@@ -17,7 +19,7 @@ public class CustomPasswordEncoder {
 
     public static byte[] hashPassword(String password) {
         String encode = encoder.encode(password);
-        return encode.getBytes();
+        return encode.getBytes(StandardCharsets.UTF_8);
     }
 
 }
