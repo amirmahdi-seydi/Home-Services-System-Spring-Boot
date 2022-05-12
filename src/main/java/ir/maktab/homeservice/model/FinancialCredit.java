@@ -19,12 +19,10 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "CREDIT")
-public class FinansicalCredit extends BaseEntity<Long> {
+public class FinancialCredit extends BaseEntity<Long> {
 
     @Column(name = "BALANCE")
     private BigDecimal balance;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
+
 }

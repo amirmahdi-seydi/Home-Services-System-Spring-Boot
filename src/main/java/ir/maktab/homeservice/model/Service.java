@@ -48,5 +48,5 @@ public class Service extends BaseEntity<Long> {
 
     @OneToMany(mappedBy = "service",
             cascade = CascadeType.ALL)
-    private Set<SpecialistService> specialistService;
+    private Set<ServiceSpecialist> serviceSpecialist;
 }

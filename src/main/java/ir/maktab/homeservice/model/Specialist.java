@@ -4,7 +4,6 @@ package ir.maktab.homeservice.model;
  */
 
 
-import ir.maktab.homeservice.exception.UnacceptableException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +28,7 @@ public class Specialist extends User {
 
     @OneToMany(mappedBy = "specialist"
             , cascade = CascadeType.ALL)
-    private Set<SpecialistService> specialistService;
+    private Set<ServiceSpecialist> serviceSpecialist;
 
     @OneToMany(mappedBy = "specialist",
             cascade = CascadeType.ALL)
@@ -39,10 +38,9 @@ public class Specialist extends User {
             cascade = CascadeType.ALL)
     private Set<Transaction> transactions;
 
-    public void getImage(byte[] profileImage) {
-        if (profileImage.length > 300000)
-            throw new UnacceptableException("Image Size Should Not Exceed 300 KB!");
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "financial_credit_id", referencedColumnName = "id", nullable = false)
+    private FinancialCredit financialCredit;
 
-        this.profileImage = profileImage;
-    }
+
 }
