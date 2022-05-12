@@ -6,10 +6,15 @@ package ir.maktab.homeservice.repository;
 import ir.maktab.homeservice.model.User;
 import ir.maktab.homeservice.model.enumeration.UserType;
 import ir.maktab.homeservice.repository.base.UserBaseRepository;
+import ir.maktab.homeservice.service.dto.extra.SecureUserCriteriaDTO;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 
-public interface UserRepository extends UserBaseRepository<User> {
+
+public interface UserRepository extends UserBaseRepository<User>, JpaSpecificationExecutor<User> {
 
     Boolean existsByUserName(String userName);
 

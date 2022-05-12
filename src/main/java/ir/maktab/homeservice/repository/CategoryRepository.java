@@ -7,4 +7,9 @@ import ir.maktab.homeservice.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+    Boolean existsByCategoryName(String name);
+
+    Category findCategoryByCategoryName(String name);
 }
+
