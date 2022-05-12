@@ -9,10 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -30,4 +27,8 @@ public class Customer extends User {
     @OneToMany(mappedBy = "customer",
             cascade = CascadeType.ALL)
     private Set<Transaction> transactions;
+
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "financial_credit_id", referencedColumnName = "id", nullable = false)
+    private FinancialCredit financialCredit;
 }

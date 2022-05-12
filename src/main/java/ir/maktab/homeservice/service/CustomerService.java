@@ -16,4 +16,7 @@ public interface CustomerService extends BaseService<Customer, Long> {
     SecureCustomerDTO save(CustomerDTO customerDTO);
 
     List<SecureCustomerDTO> fetchAllCustomer();
+
+    @Override
+    void deleteById(Long id);
 }
