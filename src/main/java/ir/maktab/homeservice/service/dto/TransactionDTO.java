@@ -23,8 +23,6 @@ public class TransactionDTO {
 
     private Long id;
     private BigDecimal amount;
-    private String uuid;
-    private Date dateOfTransaction;
-    private Customer customer;
-    private Specialist specialist;
+    private Long customerId;
+    private Long specialistId;
 }

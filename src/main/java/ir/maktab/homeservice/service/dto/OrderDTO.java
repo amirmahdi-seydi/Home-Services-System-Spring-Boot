@@ -4,6 +4,7 @@ package ir.maktab.homeservice.service.dto;
  */
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import ir.maktab.homeservice.model.*;
 import ir.maktab.homeservice.model.enumeration.OrderState;
 import lombok.AllArgsConstructor;
@@ -23,15 +24,20 @@ import java.util.List;
 public class OrderDTO {
 
     private Long id;
-    private Address address;
-    private BigDecimal bidPrice;
+    private Long customerId;
+    private Long serviceId;
     private String jobDescription;
+    private BigDecimal bidPrice;
     private OrderState orderState;
     private Date dateAndTimeOfOrderRegistration;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date dateAndTimeOfJob;
     private Double score;
-    private Customer customer;
-    private Service service;
-    private List<Offer> offers;
-    private List<Comment> comments;
+    private String city;
+    private String district;
+    private String village;
+    private String street;
+    private String alley;
+    private String houseNumber;
 }

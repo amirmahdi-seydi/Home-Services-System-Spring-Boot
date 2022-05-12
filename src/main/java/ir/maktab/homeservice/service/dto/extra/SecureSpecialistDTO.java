@@ -22,8 +22,10 @@ public class SecureSpecialistDTO {
     private Long id;
     private String firstName;
     private String lastName;
+
     @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String emailAddress;
+
     private Boolean isActive;
     private Date dateOfRegistration;
     private String userName;

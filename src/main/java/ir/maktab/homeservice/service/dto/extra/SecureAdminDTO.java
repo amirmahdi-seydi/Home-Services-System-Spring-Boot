@@ -1,21 +1,23 @@
 package ir.maktab.homeservice.service.dto.extra;
 /*
- * created by Amir mahdi seydi 5/8/2022 2:57 AM
+ * created by Amir mahdi seydi 5/10/2022 2:26 AM
  */
 
 
 import ir.maktab.homeservice.model.enumeration.UserState;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@Setter
+@NoArgsConstructor
 @Getter
-@Builder
-public class SecureCustomerDTO {
+@Setter
+public class SecureAdminDTO {
 
     private Long id;
     private String firstName;
@@ -29,4 +31,5 @@ public class SecureCustomerDTO {
     private String userName;
     private String mobileNumber;
     private UserState userState;
+    private Boolean isSuperAdmin;
 }
