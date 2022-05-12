@@ -7,6 +7,7 @@ import ir.maktab.homeservice.config.JwtUtil;
 import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.config.security.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,12 +26,14 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter  {
 
-    @Autowired
     private MyUserDetailsService myUserDetailsService;
 
-    @Autowired
     private JwtUtil jwtUtil;
 
+    public JwtRequestFilter(MyUserDetailsService myUserDetailsService) {
+        this.myUserDetailsService = myUserDetailsService;
+        this.jwtUtil = new JwtUtil();
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

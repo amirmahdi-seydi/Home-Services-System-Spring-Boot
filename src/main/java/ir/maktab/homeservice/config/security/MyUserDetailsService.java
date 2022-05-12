@@ -5,8 +5,8 @@ package ir.maktab.homeservice.config.security;
 
 import ir.maktab.homeservice.exception.WrongCredentialsException;
 import ir.maktab.homeservice.model.User;
+import ir.maktab.homeservice.repository.UserRepository;
 import ir.maktab.homeservice.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -17,18 +17,18 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class MyUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     private final HttpServletRequest request;
 
-    public MyUserDetailsService(UserService userService, HttpServletRequest request) {
-        this.userService = userService;
+    public MyUserDetailsService(UserRepository userRepository, HttpServletRequest request) {
+        this.userRepository = userRepository;
         this.request = request;
     }
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-         User user = userService.findByUserName(username);
+         User user = userRepository.findByUserName(username);
         String loggingUserType = request.getHeader("user-type");
 
         if (user != null) {
