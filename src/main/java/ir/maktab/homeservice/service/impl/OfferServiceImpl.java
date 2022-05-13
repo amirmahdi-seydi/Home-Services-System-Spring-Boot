@@ -4,7 +4,9 @@ package ir.maktab.homeservice.service.impl;
  */
 
 import ir.maktab.homeservice.config.security.CustomUserDetails;
+import ir.maktab.homeservice.exception.FinancialBalanceException;
 import ir.maktab.homeservice.exception.NotFoundException;
+import ir.maktab.homeservice.exception.UnacceptableException;
 import ir.maktab.homeservice.model.*;
 import ir.maktab.homeservice.model.enumeration.OrderState;
 import ir.maktab.homeservice.repository.OfferRepository;
@@ -59,6 +61,14 @@ public class OfferServiceImpl extends BaseServiceImpl<Offer, Long, OfferReposito
 
              Order order = orderService.findById(offerDTO.getOrderId()).get();
              Specialist specialist = specialistService.findById(user.getId()).get();
+             ir.maktab.homeservice.model.Service service = order.getService();
+
+             if (repository.existsByOrderIdAndSpecialistId(order.getId(), specialist.getId())) {
+                 throw new UnacceptableException("You are already send offer to this order!");
+             }
+             if (service.getBasePrice().compareTo(offerDTO.getBidPrice()) > 0) {
+                 throw new UnacceptableException("You're bid price cant be less than service base price!");
+             }
 
              order.setOrderState(OrderState.W_SPECIALIST_SELECTION);
              order = orderService.save(order);
@@ -113,21 +123,38 @@ public class OfferServiceImpl extends BaseServiceImpl<Offer, Long, OfferReposito
     }
 
     @Override
-    public List<Offer> fetchAllOrderOffers() {
+    public List<Offer> fetchAllOrderOffersAscBidPrice(Long id) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         User user = userService.findByUserName(userDetails.getUsername());
 
-        List<Offer> list = new ArrayList<>();
         if (user instanceof Customer) {
             Customer customer = (Customer) user;
             if (customer.getOrders().isEmpty()) {
                 throw new NotFoundException("You dont have any offer!");
             }
-            for (Order order : customer.getOrders()) {
-                list.addAll(repository.fetchAllOrderOffers(order.getId()));
-            }
+
+            return repository.fetchAllOrderOffersAscBidPrice(id, customer.getId());
+        } else {
+            return null;
         }
-        return list;
+    }
+
+    @Override
+    public List<Offer> fetchAllOrderOffersDscScore(Long id) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        User user = userService.findByUserName(userDetails.getUsername());
+
+        if (user instanceof Customer) {
+            Customer customer = (Customer) user;
+            if (customer.getOrders().isEmpty()) {
+                throw new NotFoundException("You dont have any offer!");
+            }
+
+            return repository.fetchAllOrderOffersDscScore(id, customer.getId());
+        } else {
+            return null;
+        }
     }
 }

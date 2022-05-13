@@ -61,12 +61,6 @@ public class SpecialistController {
         return new ResponseEntity<>(userService.changePassword(changePasswordDTO), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('admin')")
-    @ResponseBody
-    @PutMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
-        return new ResponseEntity<>(userService.resetPassword(resetPasswordDTO), HttpStatus.OK);
-    }
 
     @PreAuthorize("hasRole('admin')")
     @GetMapping("/getAll")

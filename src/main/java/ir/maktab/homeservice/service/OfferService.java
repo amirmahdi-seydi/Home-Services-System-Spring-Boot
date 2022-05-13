@@ -18,5 +18,7 @@ public interface OfferService extends BaseService<Offer,Long> {
 
     List<SecureOfferDTO> fetchAllOffer();
 
-    List<Offer> fetchAllOrderOffers();
+    List<Offer> fetchAllOrderOffersAscBidPrice(Long id);
+
+    List<Offer> fetchAllOrderOffersDscScore(Long id);
 }

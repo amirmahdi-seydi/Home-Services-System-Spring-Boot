@@ -5,10 +5,11 @@ package ir.maktab.homeservice.controller;
 
 
 import ir.maktab.homeservice.exception.NotFoundException;
+import ir.maktab.homeservice.model.Comment;
 import ir.maktab.homeservice.service.OrderService;
+import ir.maktab.homeservice.service.dto.CommentDTO;
 import ir.maktab.homeservice.service.dto.OfferDTO;
 import ir.maktab.homeservice.service.dto.OrderDTO;
-import ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureOrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,13 @@ public class OrderController {
     }
 
 
+    @ResponseBody
+    @PostMapping("/comment")
+    public ResponseEntity<Comment> save(@RequestBody CommentDTO commentDTO) {
+        return new ResponseEntity<>(orderService.addComment(commentDTO), HttpStatus.OK);
+    }
+
+
     @PreAuthorize("hasRole('admin')")
     @ResponseBody
     @GetMapping("/getAll")
@@ -63,8 +71,7 @@ public class OrderController {
         try {
             orderService.deleteById(Long.valueOf(id));
             return ResponseEntity.noContent().build();
-        }
-        catch (NotFoundException e){
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

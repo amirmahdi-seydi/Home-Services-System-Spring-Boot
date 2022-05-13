@@ -53,13 +53,6 @@ public class CustomerController {
 
 
     @PreAuthorize("hasRole('admin')")
-    @ResponseBody
-    @PutMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
-        return new ResponseEntity<>(userService.resetPassword(resetPasswordDTO), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasRole('admin')")
     @GetMapping("/getAll")
     public ResponseEntity<List<SecureCustomerDTO>> getAllCustomer() {
         return new ResponseEntity<>(customerService.fetchAllCustomer(), HttpStatus.OK);

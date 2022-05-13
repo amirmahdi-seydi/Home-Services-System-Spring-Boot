@@ -26,7 +26,7 @@ public class GenericSpecificationsBuilder<U> {
     public final GenericSpecificationsBuilder<U> with(final String precedenceIndicator, final String key, final String operation, final Object value, final String prefix, final String suffix) {
         SearchOperation op = SearchOperation.getSimpleOperation(operation.charAt(0));
         if (op != null) {
-            if (op == SearchOperation.EQUALITY) // the operation may be complex operation
+            if (op == SearchOperation.EQUALITY)
             {
                 final boolean startWithAsterisk = prefix != null && prefix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
                 final boolean endWithAsterisk = suffix != null && suffix.contains(SearchOperation.ZERO_OR_MORE_REGEX);

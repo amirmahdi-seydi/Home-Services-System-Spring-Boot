@@ -8,6 +8,7 @@ import ir.maktab.homeservice.config.CustomAuthenticationProvider;
 import ir.maktab.homeservice.config.JwtUtil;
 import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.config.security.MyUserDetailsService;
+import ir.maktab.homeservice.exception.NotFoundException;
 import ir.maktab.homeservice.exception.UnacceptableException;
 import ir.maktab.homeservice.model.User;
 import ir.maktab.homeservice.model.enumeration.UserState;
@@ -25,9 +26,8 @@ import ir.maktab.homeservice.service.dto.extra.request.AuthenticationResponseDTO
 import ir.maktab.homeservice.service.dto.extra.request.ChangePasswordDTO;
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
 import ir.maktab.homeservice.util.SearchOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -106,7 +106,23 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
 
     @Override
     public String resetPassword(ResetPasswordDTO resetPasswordDTO) {
-        return null;
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+
+        String userName = userDetails.getUsername();
+        User admin = findByUserName(userName);
+        if (!admin.getUserType().equals("admin")) {
+            throw new AccessDeniedException("Access denied!");
+        }
+        if (findByUserName(resetPasswordDTO.getUserName()) == null) {
+            throw new NotFoundException("Wrong user name!");
+        }
+
+        User user = findByUserName(resetPasswordDTO.getUserName());
+        user.setHashedPassword(CustomPasswordEncoder.hashPassword(resetPasswordDTO.getNewPassword()));
+        repository.save(user);
+
+        return "Password reset successfully!";
     }
 
     @Override
@@ -133,6 +149,24 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
                 customUserDetails.getUser().getMobileNumber(),
                 customUserDetails.getUser().getUserState()
         ));
+    }
+
+    @Override
+    public String giveAccessByAdmin(Long id) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        User admin = findByUserName(userDetails.getUsername());
+        if (findById(id).isEmpty()) {
+           throw new NotFoundException("There is no user with this id");
+        }
+        if (!admin.getUserType().equals("admin")) {
+            throw new AccessDeniedException("Access denied!");
+        }
+        User user = findById(id).get();
+        user.setIsActive(Boolean.TRUE);
+        user.setUserState(UserState.ACCEPTED);
+        repository.save(user);
+        return null;
     }
 
     @Override

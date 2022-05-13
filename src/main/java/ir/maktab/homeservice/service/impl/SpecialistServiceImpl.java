@@ -20,9 +20,7 @@ import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.SpecialistDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureSpecialistDTO;
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
-import org.hibernate.id.factory.IdentifierGeneratorFactory;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

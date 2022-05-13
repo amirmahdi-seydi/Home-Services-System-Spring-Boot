@@ -5,6 +5,7 @@ package ir.maktab.homeservice.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ir.maktab.homeservice.model.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,28 +28,30 @@ public class Offer extends BaseEntity<Long> {
             nullable = false)
     private BigDecimal bidPrice;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonFormat(pattern="HH:mm")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DURATION_OF_JOB",
             nullable = false)
     private Date durationOfJob;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonFormat(pattern="HH:mm")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "START_TIME_OF_JOB",
             nullable = false)
     private Date startTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
     @Column(name = "DATE_AND_TIME_OF_REGISTER_OFFER",
             nullable = false)
     private Date dateAndTimeOfRegisterOffer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "SPECIALIST_ID", nullable = false)
     private Specialist specialist;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "ORDER_ID", nullable = false)
     private Order order;
 }

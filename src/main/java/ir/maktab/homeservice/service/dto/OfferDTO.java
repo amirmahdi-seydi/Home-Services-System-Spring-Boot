@@ -20,12 +20,10 @@ public class OfferDTO {
 
     private Long id;
     private BigDecimal bidPrice;
-    @JsonFormat(pattern="HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     private Date durationOfJob;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     private Date startTime;
-//    private Date dateAndTimeOfRegisterOffer;
-//    private Long specialistId;
     private Long orderId;
 
 

@@ -11,6 +11,7 @@ import ir.maktab.homeservice.model.enumeration.OrderState;
 import ir.maktab.homeservice.repository.OrderRepository;
 import ir.maktab.homeservice.service.*;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
+import ir.maktab.homeservice.service.dto.CommentDTO;
 import ir.maktab.homeservice.service.dto.OfferDTO;
 import ir.maktab.homeservice.service.dto.OrderDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureOrderDTO;
@@ -38,15 +39,22 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
 
     private final TransactionService transactionService;
 
-    public OrderServiceImpl(OrderRepository repository, CustomerService customerService,
-                            ServiceService serviceService, UserService userService,
-                            @Lazy OfferService offerService, TransactionService transactionService) {
+    private final CommentService commentService;
+
+    public OrderServiceImpl(OrderRepository repository,
+                            CustomerService customerService,
+                            ServiceService serviceService,
+                            UserService userService,
+                            OfferService offerService,
+                            TransactionService transactionService,
+                            CommentService commentService) {
         super(repository);
         this.customerService = customerService;
         this.serviceService = serviceService;
         this.userService = userService;
         this.offerService = offerService;
         this.transactionService = transactionService;
+        this.commentService = commentService;
     }
 
     @Override
@@ -197,8 +205,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
                 transaction.setSpecialist(specialist);
                 transaction.setCustomer(customer);
                 transaction.setDateOfTransaction(Date.from(Instant.now()));
-
-
+                transactionService.save(transaction);
             }
         }
         order = repository.save(order);
@@ -206,5 +213,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
                 .id(order.getId())
                 .orderState(order.getOrderState())
                 .build();
+    }
+
+    @Override
+    public Comment addComment(CommentDTO commentDTO) {
+        return commentService.save(commentDTO);
     }
 }

@@ -22,7 +22,15 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
             " from Offer o order by o.id")
     List<SecureOfferDTO> fetchAllOffersDTO();
 
+    @Query("select o from Offer o where o.order.id = :id and o.specialist.id = :customerId order by o.bidPrice asc")
+    List<Offer> fetchAllOrderOffersAscBidPrice(@Param("id") Long id,
+                                    @Param("customerId") Long customerId);
 
-    @Query(value = "select of from Offer of where of.order_id = :id", nativeQuery = true)
-    List<Offer> fetchAllOrderOffers(@Param("id") Long id);
+
+    @Query("select o from Offer o where o.order.id = :id and o.specialist.id = :customerId order by o.specialist.score desc ")
+    List<Offer> fetchAllOrderOffersDscScore(@Param("id") Long id,
+                                    @Param("customerId") Long customerId);
+
+    Boolean existsByOrderIdAndSpecialistId(Long order_id, Long specialist_id);
+
 }

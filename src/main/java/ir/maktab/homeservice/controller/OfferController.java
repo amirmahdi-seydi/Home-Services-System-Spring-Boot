@@ -49,9 +49,9 @@ public class OfferController {
 
     @PreAuthorize("hasRole('customer')")
     @ResponseBody
-    @GetMapping("/getAllOrderOffer")
-    public ResponseEntity<List<Offer>> fetchAllOrderOffers() {
-        return new ResponseEntity<>(offerService.fetchAllOrderOffers(), HttpStatus.OK);
+    @GetMapping("/getAllOrderOffer/{orderId}")
+    public ResponseEntity<List<Offer>> fetchAllOrderOffers(@PathVariable("orderId") Long orderId) {
+        return new ResponseEntity<>(offerService.fetchAllOrderOffersAscBidPrice(orderId), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('admin') or hasRole('specialist')")

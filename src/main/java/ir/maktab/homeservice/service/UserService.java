@@ -28,6 +28,8 @@ public interface UserService extends BaseService<User, Long>{
 
     AuthenticationResponseDTO loginRequest(AuthenticationRequestDTO authenticationRequestDTO);
 
+    String giveAccessByAdmin(Long id);
+
     Boolean existsByUserName(String userName);
 
     Boolean existsByEmail(String email);

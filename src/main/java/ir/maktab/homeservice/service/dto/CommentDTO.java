@@ -18,5 +18,5 @@ public class CommentDTO {
 
     private Long id;
     private String commentBody;
-    private Date dateAndTimeOfRegisterComment;
+    private Long orderId;
 }

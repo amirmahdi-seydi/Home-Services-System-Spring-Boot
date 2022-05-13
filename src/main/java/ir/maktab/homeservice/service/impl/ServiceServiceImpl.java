@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service.impl;
  * created by Amir mahdi seydi 5/7/2022 4:55 PM
  */
 
+import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.exception.AlreadyExistException;
 import ir.maktab.homeservice.exception.NotFoundException;
 import ir.maktab.homeservice.model.*;
@@ -10,8 +11,11 @@ import ir.maktab.homeservice.repository.ServiceRepository;
 import ir.maktab.homeservice.service.CategoryService;
 import ir.maktab.homeservice.service.ServiceService;
 import ir.maktab.homeservice.service.SpecialistService;
+import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.extra.ServiceAbstractDTO;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
 
@@ -24,17 +28,29 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
 
     private final SpecialistService specialistService;
 
-    public ServiceServiceImpl(ServiceRepository repository, CategoryService categoryService, SpecialistService specialistService) {
+    private final UserService userService;
+
+    public ServiceServiceImpl(ServiceRepository repository,
+                              CategoryService categoryService,
+                              SpecialistService specialistService,
+                              UserService userService) {
         super(repository);
         this.categoryService = categoryService;
         this.specialistService = specialistService;
+        this.userService = userService;
     }
-
 
     @Override
     public ServiceAbstractDTO save(ServiceAbstractDTO serviceDTO) {
         String serviceName = serviceDTO.getName().trim().replaceAll("\\s+", " ").toUpperCase();
         String categoryName = serviceDTO.getCategoryName().trim().replaceAll("\\s+", " ").toUpperCase();
+
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        User user = userService.findByUserName(userDetails.getUsername());
+        if (!user.getUserType().equals("admin")) {
+            throw new AccessDeniedException("Access denied!");
+        }
 
         if (!categoryService.existByCategoryName(categoryName)) {
             throw new NotFoundException("Service not found!");
