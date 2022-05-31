@@ -17,9 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CategoryDTO {
+public class SubServiceDTO {
 
     private Long id;
-    private String categoryName;
-    private List<Service> services;
+    private String name;
+
 }

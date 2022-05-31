@@ -18,13 +18,13 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "CATEGORY")
-public class Category extends BaseEntity<Long> {
+@Table(name = "SUB_SERVICE")
+public class SubService extends BaseEntity<Long> {
 
-    @Column(name = "CATEGORY_NAME")
-    private String categoryName;
+    @Column(name = "NAME")
+    private String name;
 
-    @OneToMany(mappedBy = "category",
+    @OneToMany(mappedBy = "subService",
             cascade = CascadeType.ALL)
     private Set<Service> services;
 }
