@@ -4,11 +4,14 @@ package ir.maktab.homeservice.model;
  */
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 import ir.maktab.homeservice.model.base.BaseEntity;
+import ir.maktab.homeservice.model.enumeration.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -22,11 +25,19 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "TRANSACTION")
+@TypeDef(
+        name = "pgsql_enum",
+        typeClass = PostgreSQLEnumType.class
+)
 public class Transaction extends BaseEntity<Long> {
 
-    @Column(name = "amount",
+    @Column(name = "AMOUNT",
             nullable = false)
     private BigDecimal amount;
+
+    @Column(name = "TRANSACTION_TYPE",
+                     nullable = false)
+    private TransactionType transactionType;
 
     @Column(name = "UUID",
             nullable = false)
