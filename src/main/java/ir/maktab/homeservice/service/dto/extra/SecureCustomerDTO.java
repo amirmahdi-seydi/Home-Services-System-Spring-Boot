@@ -22,7 +22,7 @@ public class SecureCustomerDTO {
     private String lastName;
 
     @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", flags = Pattern.Flag.CASE_INSENSITIVE)
-    private String emailAddress;
+    private String email;
 
     private Boolean isActive;
     private Date dateOfRegistration;

@@ -22,9 +22,10 @@ public class SecureUserDTO {
     private Long id;
     private String firstName;
     private String lastName;
-    private String emailAddress;
+    private String email;
     private Boolean isActive;
     private Date dateOfRegistration;
+    private String userType;
     private String userName;
     private String mobileNumber;
     private UserState userState;

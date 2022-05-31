@@ -47,7 +47,7 @@ public class SpecialistController {
     }
 
 
-    @PreAuthorize("hasRole('specialist') or hasRole('admin')")
+   @PreAuthorize("hasRole('specialist') or hasRole('admin')")
     @ResponseBody
     @PutMapping("/update")
     public ResponseEntity<SecureSpecialistDTO> updateSpecialist(@Valid @RequestBody SpecialistDTO specialistDTO) {
@@ -60,7 +60,6 @@ public class SpecialistController {
     public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
         return new ResponseEntity<>(userService.changePassword(changePasswordDTO), HttpStatus.OK);
     }
-
 
     @PreAuthorize("hasRole('admin')")
     @GetMapping("/getAll")

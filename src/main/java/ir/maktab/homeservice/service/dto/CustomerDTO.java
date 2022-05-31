@@ -35,7 +35,8 @@ public class CustomerDTO {
 
     @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
             flags = Pattern.Flag.CASE_INSENSITIVE,
-            message = "Please provide a valid email address")       private String emailAddress;
+            message = "Please provide a valid email address")
+    private String email;
 
     private String mobileNumber;
 

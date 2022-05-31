@@ -7,32 +7,30 @@ import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.exception.AlreadyExistException;
 import ir.maktab.homeservice.exception.NotFoundException;
 import ir.maktab.homeservice.exception.UnacceptableException;
-import ir.maktab.homeservice.model.FinancialCredit;
-import ir.maktab.homeservice.model.Specialist;
-import ir.maktab.homeservice.model.User;
-import ir.maktab.homeservice.model.UserFactory;
+import ir.maktab.homeservice.model.*;
 import ir.maktab.homeservice.model.enumeration.UserState;
 import ir.maktab.homeservice.repository.SpecialistRepository;
 import ir.maktab.homeservice.service.FinancialCreditService;
+import ir.maktab.homeservice.service.ServiceService;
 import ir.maktab.homeservice.service.SpecialistService;
 import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
-import ir.maktab.homeservice.service.dto.SpecialistDTO;
+import ir.maktab.homeservice.service.dto.ServiceDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureSpecialistDTO;
+import ir.maktab.homeservice.service.dto.extra.SpecialistAbstractDTO;
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
-@Service
+@org.springframework.stereotype.Service
 public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, SpecialistRepository>
         implements SpecialistService {
 
@@ -40,18 +38,24 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
     private final FinancialCreditService financialCreditService;
 
-    public SpecialistServiceImpl(SpecialistRepository repository, UserService userService, FinancialCreditService financialCreditService) {
+    private final ServiceService serviceService;
+
+    public SpecialistServiceImpl(SpecialistRepository repository,
+                                 UserService userService,
+                                 FinancialCreditService financialCreditService,
+                                 ServiceService serviceService) {
         super(repository);
         this.userService = userService;
         this.financialCreditService = financialCreditService;
+        this.serviceService = serviceService;
     }
 
     @Override
-    public SecureSpecialistDTO save(SpecialistDTO specialistDTO) {
+    public SecureSpecialistDTO save(SpecialistAbstractDTO specialistDTO) {
 
         if (repository.existsByUserName(specialistDTO.getUserName())) {
             throw new AlreadyExistException("This user name already exist!");
-        } else if (repository.existsByEmailAddress(specialistDTO.getEmailAddress())) {
+        } else if (repository.existsByEmail(specialistDTO.getEmail())) {
             throw new AlreadyExistException("This email already exist! ");
         } else if (repository.existsByMobileNumber(specialistDTO.getMobileNumber())) {
             throw new AlreadyExistException("This mobile number already exist");
@@ -68,8 +72,8 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
                 Specialist specialist = (Specialist) specialistUser;
                 specialist.setFirstName(specialistDTO.getFirstName());
                 specialist.setLastName(specialistDTO.getLastName());
-                specialist.setEmailAddress(specialistDTO.getEmailAddress());
-                specialist.setHashedPassword(CustomPasswordEncoder.hashPassword(specialistDTO.getPassword()));
+                specialist.setEmail(specialistDTO.getEmail());
+                specialist.setPassword(CustomPasswordEncoder.hashPassword(specialistDTO.getPassword()));
                 specialist.setDateOfRegistration(Date.from(Instant.now()));
                 specialist.setScore(null);
                 specialist.setProfileImage(getProfileImage(specialistDTO.getProfileImage()));
@@ -79,11 +83,16 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
                 specialist.setFinancialCredit(financialCredit);
                 specialist = repository.save(specialist);
 
+
+                //TODO, commit msg  Add Feature to specialist can see the services and select between them
+
+
+
                 return new SecureSpecialistDTO(
                         specialist.getId(),
                         specialist.getFirstName(),
                         specialist.getLastName(),
-                        specialist.getEmailAddress(),
+                        specialist.getEmail(),
                         specialist.getIsActive(),
                         specialist.getDateOfRegistration(),
                         specialist.getUserName(),
@@ -102,7 +111,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
             CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
                     .getContext().getAuthentication().getPrincipal();
-                User user = userService.findByUserName(userDetails.getUsername());
+            User user = userService.findByUserName(userDetails.getUsername());
             if (!user.getId().equals(specialistDTO.getId()) && user.getUserType().equals("specialist")) {
                 throw new AccessDeniedException("Access denied!");
             }
@@ -110,7 +119,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
             Specialist specialist = repository.getById(specialistDTO.getId());
             specialist.setFirstName(specialistDTO.getFirstName());
             specialist.setLastName(specialistDTO.getLastName());
-            specialist.setEmailAddress(specialistDTO.getEmailAddress());
+            specialist.setEmail(specialistDTO.getEmail());
             specialist.setProfileImage(getProfileImage(specialistDTO.getProfileImage()));
             specialist.setUserState(UserState.PENDING_CONFORMATION);
             specialist.setMobileNumber(specialistDTO.getMobileNumber());
@@ -121,7 +130,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
                     specialist.getId(),
                     specialist.getFirstName(),
                     specialist.getLastName(),
-                    specialist.getEmailAddress(),
+                    specialist.getEmail(),
                     specialist.getIsActive(),
                     specialist.getDateOfRegistration(),
                     specialist.getUserName(),
@@ -142,6 +151,7 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
     public User findByUserName(String userName) {
         return repository.findByUserName(userName);
     }
+
 
     @Override
     public Boolean existsByUserName(String userName) {
@@ -180,4 +190,44 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
         return profileImage;
     }
+
+
+    @Override
+    public SpecialistAbstractDTO addServiceToSpecialistSkills(SpecialistAbstractDTO specialistAbstractDTO) {
+
+        if (!repository.existsByUserName(specialistAbstractDTO.getUserName())) {
+            throw new NotFoundException("No Specialist found!");
+        }
+
+        Specialist specialist = repository.findByUserName(specialistAbstractDTO.getUserName());
+
+        Service service;
+        List<Long> servicesIds = new ArrayList<>();
+        if (specialistAbstractDTO.getServicesId() != null) {
+            servicesIds = Arrays.asList(specialistAbstractDTO.getServicesId());
+
+            List<Service> services = serviceService.findServiceBy(
+                    Arrays.asList(specialistAbstractDTO.getServicesId())
+            );
+
+            HashSet<ServiceSpecialist> serviceSpecialists = new HashSet<>();
+
+            for (Service serv : services) {
+                ServiceSpecialist serviceSpecialist = new ServiceSpecialist();
+                serviceSpecialist.setService(serv);
+                serviceSpecialist.setSpecialist(specialist);
+                if (specialist.getServiceSpecialist().contains(serviceSpecialist)) {
+                    continue;
+                }
+                serviceSpecialists.add(serviceSpecialist);
+            }
+
+            specialist = repository.save(specialist);
+
+        }
+
+        return null;
+    }
+
+
 }

@@ -34,7 +34,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return new String(user.getHashedPassword(), StandardCharsets.UTF_8);
+        return new String(user.getPassword(), StandardCharsets.UTF_8);
     }
 
     @Override

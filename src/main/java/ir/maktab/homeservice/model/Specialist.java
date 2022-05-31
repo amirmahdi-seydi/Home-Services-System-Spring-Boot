@@ -4,6 +4,7 @@ package ir.maktab.homeservice.model;
  */
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +27,9 @@ public class Specialist extends User {
     @Column(name = "PROFILE_IMAGE")
     private byte[] profileImage;
 
-    @OneToMany(mappedBy = "specialist"
-            , cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "specialist",
+            cascade = CascadeType.ALL)
     private Set<ServiceSpecialist> serviceSpecialist;
 
     @OneToMany(mappedBy = "specialist",
@@ -38,8 +40,9 @@ public class Specialist extends User {
             cascade = CascadeType.ALL)
     private Set<Transaction> transactions;
 
+
     @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "financial_credit_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "financial_credit_id", referencedColumnName = "id")
     private FinancialCredit financialCredit;
 
 

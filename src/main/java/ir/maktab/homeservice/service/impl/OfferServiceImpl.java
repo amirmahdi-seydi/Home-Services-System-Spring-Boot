@@ -128,12 +128,13 @@ public class OfferServiceImpl extends BaseServiceImpl<Offer, Long, OfferReposito
                 .getContext().getAuthentication().getPrincipal();
         User user = userService.findByUserName(userDetails.getUsername());
 
+
+
         if (user instanceof Customer) {
             Customer customer = (Customer) user;
             if (customer.getOrders().isEmpty()) {
                 throw new NotFoundException("You dont have any offer!");
             }
-
             return repository.fetchAllOrderOffersAscBidPrice(id, customer.getId());
         } else {
             return null;

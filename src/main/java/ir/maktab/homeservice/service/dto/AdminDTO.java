@@ -25,11 +25,9 @@ public class AdminDTO {
     private String userName;
     private String password;
     @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", flags = Pattern.Flag.CASE_INSENSITIVE)
-    private String emailAddress;
+    private String email;
     private String mobileNumber;
-    private UserState userState;
-    private Date dateOfRegistration;
-    private Boolean isSuperAdmin;
-    private Boolean isActive;
+
+
 
 }

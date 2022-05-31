@@ -14,7 +14,7 @@ import java.util.List;
 public interface CustomerRepository extends UserBaseRepository<Customer> {
 
     @Query("select new ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO(" +
-            "c.id, c.firstName, c.lastName, c.emailAddress," +
+            "c.id, c.firstName, c.lastName, c.email," +
             " c.isActive, c.dateOfRegistration,c.userName, c.mobileNumber, c.userState)" +
             " from Customer c order by c.id")
     List<SecureCustomerDTO> fetchAllCustomerDTOS();

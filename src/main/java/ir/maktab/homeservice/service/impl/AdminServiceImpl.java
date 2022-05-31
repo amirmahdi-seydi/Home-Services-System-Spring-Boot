@@ -35,11 +35,11 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
     public SecureAdminDTO save(AdminDTO adminDTO) {
         if (adminDTO.getId() == null) {
             UserFactory userFactory = new UserFactory();
-            User userAdmin = userFactory.getUser("customer");
+            User userAdmin = userFactory.getUser("admin");
 
             if (repository.existsByUserName(adminDTO.getUserName())) {
                 throw new AlreadyExistException("This user name already exist!");
-            } else if (repository.existsByEmailAddress(adminDTO.getEmailAddress())) {
+            } else if (repository.existsByEmail(adminDTO.getEmail())) {
                 throw new AlreadyExistException("This email already exist! ");
             } else if (repository.existsByMobileNumber(adminDTO.getMobileNumber())) {
                 throw new AlreadyExistException("This mobile number already exist");
@@ -49,10 +49,10 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
                 Admin admin = (Admin) userAdmin;
                 admin.setFirstName(adminDTO.getFirstName());
                 admin.setLastName(adminDTO.getLastName());
-                admin.setEmailAddress(adminDTO.getEmailAddress());
+                admin.setEmail(adminDTO.getEmail());
                 admin.setMobileNumber(adminDTO.getMobileNumber());
                 admin.setUserState(UserState.PENDING_CONFORMATION);
-                admin.setHashedPassword(CustomPasswordEncoder.hashPassword(adminDTO.getPassword()));
+                admin.setPassword(CustomPasswordEncoder.hashPassword(adminDTO.getPassword()));
                 admin.setDateOfRegistration(Date.from(Instant.now()));
                 admin.setUserName(adminDTO.getUserName());
                 admin = repository.save(admin);
@@ -61,7 +61,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
                         admin.getId(),
                         admin.getFirstName(),
                         admin.getLastName(),
-                        admin.getEmailAddress(),
+                        admin.getEmail(),
                         admin.getIsActive(),
                         admin.getDateOfRegistration(),
                         admin.getUserName(),
@@ -77,7 +77,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
             Admin admin = repository.getById(adminDTO.getId());
             admin.setFirstName(adminDTO.getFirstName());
             admin.setLastName(adminDTO.getLastName());
-            admin.setEmailAddress(adminDTO.getEmailAddress());
+            admin.setEmail(adminDTO.getEmail());
             admin.setMobileNumber(adminDTO.getMobileNumber());
             admin.setUserState(UserState.PENDING_CONFORMATION);
             admin.setUserName(adminDTO.getUserName());
@@ -86,7 +86,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, Long, AdminReposito
                     admin.getId(),
                     admin.getFirstName(),
                     admin.getLastName(),
-                    admin.getEmailAddress(),
+                    admin.getEmail(),
                     admin.getIsActive(),
                     admin.getDateOfRegistration(),
                     admin.getUserName(),

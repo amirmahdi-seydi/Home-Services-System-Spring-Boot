@@ -8,6 +8,7 @@ import ir.maktab.homeservice.config.security.MyUserDetailsService;
 import ir.maktab.homeservice.exception.AccountNotActiveException;
 import ir.maktab.homeservice.exception.WrongCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +40,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
-
+        System.out.println(userDetails.getAuthorities());
         if (userDetails.isEnabled()) {
             if (passwordEncoder.matches(password, userDetails.getPassword())) {
                 return new UsernamePasswordAuthenticationToken(

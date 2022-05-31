@@ -26,7 +26,9 @@ import ir.maktab.homeservice.service.dto.extra.request.AuthenticationResponseDTO
 import ir.maktab.homeservice.service.dto.extra.request.ChangePasswordDTO;
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
 import ir.maktab.homeservice.util.SearchOperation;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,21 +41,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+
 @Service
 public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
         implements UserService {
 
-    private PasswordEncoder passwordEncoder;
 
-    private MyUserDetailsService myUserDetailsService;
+    private final MyUserDetailsService myUserDetailsService;
 
-    private CustomAuthenticationProvider customAuthenticationProvider;
+    private final CustomAuthenticationProvider customAuthenticationProvider;
 
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder, MyUserDetailsService myUserDetailsService, CustomAuthenticationProvider customAuthenticationProvider) {
+    public UserServiceImpl(UserRepository repository,
+                           @Lazy MyUserDetailsService myUserDetailsService,
+                           @Lazy CustomAuthenticationProvider customAuthenticationProvider) {
         super(repository);
-        this.passwordEncoder = passwordEncoder;
         this.myUserDetailsService = myUserDetailsService;
         this.customAuthenticationProvider = customAuthenticationProvider;
         this.jwtUtil = new JwtUtil();
@@ -64,11 +67,11 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
         User user = repository.getById(userDTO.getId());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        user.setEmailAddress(userDTO.getEmailAddress());
+        user.setEmail(userDTO.getEmailAddress());
         user.setUserName(userDTO.getUserName());
         user.setUserState(UserState.PENDING_CONFORMATION);
         user.setDateOfRegistration(userDTO.getDateOfRegistration());
-        user.setHashedPassword(CustomPasswordEncoder.hashPassword(userDTO.getPassword()));
+        user.setPassword(CustomPasswordEncoder.hashPassword(userDTO.getPassword()));
         user.setMobileNumber(userDTO.getMobileNumber());
         User savedUser = repository.save(user);
 
@@ -76,9 +79,10 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
                 savedUser.getId(),
                 savedUser.getFirstName(),
                 savedUser.getLastName(),
-                savedUser.getEmailAddress(),
+                savedUser.getEmail(),
                 savedUser.getIsActive(),
                 savedUser.getDateOfRegistration(),
+                savedUser.getUserType(),
                 savedUser.getUserName(),
                 savedUser.getMobileNumber(),
                 savedUser.getUserState()
@@ -94,8 +98,8 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
         User user = findByUserName(userName);
         String password = userDetails.getPassword();
 
-        if (passwordEncoder.matches(changePasswordDTO.getOldPassword(), password)) {
-            user.setHashedPassword(CustomPasswordEncoder.hashPassword(changePasswordDTO.getNewPassword()));
+        if (CustomPasswordEncoder.matches(changePasswordDTO.getOldPassword(), password)) {
+            user.setPassword(CustomPasswordEncoder.hashPassword(changePasswordDTO.getNewPassword()));
             repository.save(user);
         } else {
             throw new UnacceptableException("The entered password is incorrect!");
@@ -119,22 +123,22 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
         }
 
         User user = findByUserName(resetPasswordDTO.getUserName());
-        user.setHashedPassword(CustomPasswordEncoder.hashPassword(resetPasswordDTO.getNewPassword()));
+        user.setPassword(CustomPasswordEncoder.hashPassword(resetPasswordDTO.getNewPassword()));
         repository.save(user);
 
         return "Password reset successfully!";
     }
 
     @Override
-    public AuthenticationResponseDTO loginRequest(AuthenticationRequestDTO authenticationRequestDTO) {
+        public AuthenticationResponseDTO loginRequest(AuthenticationRequestDTO authenticationRequestDTO) {
         customAuthenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authenticationRequestDTO.getUserName(),
+                        authenticationRequestDTO.getUsername(),
                         authenticationRequestDTO.getPassword()
                 )
         );
         UserDetails userDetails = myUserDetailsService.
-                loadUserByUsername(authenticationRequestDTO.getUserName());
+                loadUserByUsername(authenticationRequestDTO.getUsername());
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
         String generatedJWT = jwtUtil.generateToken(customUserDetails);
 
@@ -142,9 +146,10 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
                 customUserDetails.getUser().getId(),
                 customUserDetails.getUser().getFirstName(),
                 customUserDetails.getUser().getLastName(),
-                customUserDetails.getUser().getEmailAddress(),
+                customUserDetails.getUser().getEmail(),
                 customUserDetails.getUser().getIsActive(),
                 customUserDetails.getUser().getDateOfRegistration(),
+                customUserDetails.getUser().getUserType(),
                 customUserDetails.getUser().getUserName(),
                 customUserDetails.getUser().getMobileNumber(),
                 customUserDetails.getUser().getUserState()
@@ -176,7 +181,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
 
     @Override
     public Boolean existsByEmail(String email) {
-        return repository.existsByEmailAddress(email);
+        return repository.existsByEmail(email);
     }
 
     @Override

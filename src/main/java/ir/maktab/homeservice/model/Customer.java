@@ -29,6 +29,6 @@ public class Customer extends User {
     private Set<Transaction> transactions;
 
     @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "financial_credit_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "financial_credit_id", referencedColumnName = "id")
     private FinancialCredit financialCredit;
 }

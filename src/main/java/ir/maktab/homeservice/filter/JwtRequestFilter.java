@@ -30,13 +30,15 @@ public class JwtRequestFilter extends OncePerRequestFilter  {
 
     private JwtUtil jwtUtil;
 
-    public JwtRequestFilter(MyUserDetailsService myUserDetailsService) {
+    public JwtRequestFilter( @Lazy MyUserDetailsService myUserDetailsService) {
         this.myUserDetailsService = myUserDetailsService;
         this.jwtUtil = new JwtUtil();
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
 
@@ -49,7 +51,7 @@ public class JwtRequestFilter extends OncePerRequestFilter  {
         }
 
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            CustomUserDetails userDetails = this.myUserDetailsService.loadUserByUsername(userName);
+            CustomUserDetails userDetails = (CustomUserDetails) this.myUserDetailsService.loadUserByUsername(userName);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

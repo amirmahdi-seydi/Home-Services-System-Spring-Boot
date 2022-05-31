@@ -21,11 +21,14 @@ import java.util.List;
 
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("api/order")
 public class OrderController {
 
     private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @PreAuthorize("hasRole('customer')")
     @ResponseBody
@@ -47,6 +50,13 @@ public class OrderController {
     @PutMapping("/choose/of")
     public ResponseEntity<SecureOrderDTO> chooseSpecialistOffer(@RequestBody OfferDTO offerDTO) {
         return new ResponseEntity<>(orderService.chooseSpecialistOffer(offerDTO), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('specialist') or hasRole('admin')")
+    @ResponseBody
+    @GetMapping("/getOrders/spe")
+    public ResponseEntity<List<SecureOrderDTO>> seeCustomerOrder() {
+        return new ResponseEntity<>(orderService.seeOrdersByBaseService(), HttpStatus.OK);
     }
 
 

@@ -13,7 +13,7 @@ public interface UserBaseRepository<E extends User> extends JpaRepository<E, Lon
 
     E findByUserName(String userName);
 
-    Boolean existsByEmailAddress(String email);
+    Boolean existsByEmail(String email);
 
     Boolean existsByMobileNumber(String phoneNumber);
 

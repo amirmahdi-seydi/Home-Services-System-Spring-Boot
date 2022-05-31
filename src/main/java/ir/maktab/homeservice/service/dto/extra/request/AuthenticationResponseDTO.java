@@ -15,6 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticationResponseDTO {
+
     private String jwt;
     private SecureUserDTO user;
 }

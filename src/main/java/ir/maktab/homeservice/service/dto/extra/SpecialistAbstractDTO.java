@@ -1,9 +1,8 @@
-package ir.maktab.homeservice.service.dto;
+package ir.maktab.homeservice.service.dto.extra;
 /*
- * created by Amir mahdi seydi 5/7/2022 4:54 PM
+ * created by Amir mahdi seydi 5/30/2022 10:16 PM
  */
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,13 +12,13 @@ import javax.validation.constraints.Pattern;
 import java.io.File;
 
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class SpecialistDTO {
+public class SpecialistAbstractDTO {
 
     private Long id;
+    private Long[] servicesId;
     private String firstName;
     private String lastName;
     private String userName;
@@ -37,6 +36,4 @@ public class SpecialistDTO {
 
     //  @NotBlank(message = "Profile image is mandatory!")
     private File profileImage;
-
-
 }

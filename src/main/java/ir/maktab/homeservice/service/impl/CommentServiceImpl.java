@@ -11,6 +11,7 @@ import ir.maktab.homeservice.service.CommentService;
 import ir.maktab.homeservice.service.OrderService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.CommentDTO;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,7 +26,7 @@ public class CommentServiceImpl extends BaseServiceImpl<Comment, Long, CommentRe
 
     private final OrderService orderService;
 
-    public CommentServiceImpl(CommentRepository repository, OrderService orderService) {
+    public CommentServiceImpl(CommentRepository repository,@Lazy OrderService orderService) {
         super(repository);
         this.orderService = orderService;
     }

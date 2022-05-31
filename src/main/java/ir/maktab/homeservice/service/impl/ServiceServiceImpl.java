@@ -8,12 +8,14 @@ import ir.maktab.homeservice.exception.AlreadyExistException;
 import ir.maktab.homeservice.exception.NotFoundException;
 import ir.maktab.homeservice.model.*;
 import ir.maktab.homeservice.repository.ServiceRepository;
-import ir.maktab.homeservice.service.CategoryService;
+import ir.maktab.homeservice.service.SubServiceService;
 import ir.maktab.homeservice.service.ServiceService;
 import ir.maktab.homeservice.service.SpecialistService;
 import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
+import ir.maktab.homeservice.service.dto.ServiceDTO;
 import ir.maktab.homeservice.service.dto.extra.ServiceAbstractDTO;
+import ir.maktab.homeservice.service.dto.extra.SpecialistAbstractDTO;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -24,18 +26,18 @@ import java.util.*;
 public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRepository>
         implements ServiceService {
 
-    private final CategoryService categoryService;
+    private final SubServiceService subServiceService;
 
     private final SpecialistService specialistService;
 
     private final UserService userService;
 
     public ServiceServiceImpl(ServiceRepository repository,
-                              CategoryService categoryService,
+                              SubServiceService subServiceService,
                               SpecialistService specialistService,
                               UserService userService) {
         super(repository);
-        this.categoryService = categoryService;
+        this.subServiceService = subServiceService;
         this.specialistService = specialistService;
         this.userService = userService;
     }
@@ -43,16 +45,17 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
     @Override
     public ServiceAbstractDTO save(ServiceAbstractDTO serviceDTO) {
         String serviceName = serviceDTO.getName().trim().replaceAll("\\s+", " ").toUpperCase();
-        String categoryName = serviceDTO.getCategoryName().trim().replaceAll("\\s+", " ").toUpperCase();
+        String categoryName = serviceDTO.getSubServiceName().trim().replaceAll("\\s+", " ").toUpperCase();
 
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
+
         User user = userService.findByUserName(userDetails.getUsername());
         if (!user.getUserType().equals("admin")) {
             throw new AccessDeniedException("Access denied!");
         }
 
-        if (!categoryService.existByCategoryName(categoryName)) {
+        if (!subServiceService.existBySubServiceName(categoryName)) {
             throw new NotFoundException("Service not found!");
         }
 
@@ -61,7 +64,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                 throw new AlreadyExistException("This SubService already define!");
             }
 
-            Category category = categoryService.findCategoryByCategoryName(categoryName);
+            SubService subService = subServiceService.findSubServiceByName(categoryName);
 
             serviceDTO.setName(serviceName);
 
@@ -70,7 +73,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
             service.setBasePrice(serviceDTO.getBasePrice());
             service.setDescription(serviceDTO.getDescription());
             service.setOptionalDescription(serviceDTO.getOptionalDescription());
-            service.setCategory(category);
+            service.setSubService(subService);
 
             List<Long> specialistId = new ArrayList<>();
 
@@ -84,6 +87,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                     ServiceSpecialist serviceSpecialist = new ServiceSpecialist();
                     serviceSpecialist.setService(service);
                     serviceSpecialist.setSpecialist(specialist);
+                    serviceSpecialists.add(serviceSpecialist);
                     specialistId.add(specialist.getId());
                 }
                 service.setServiceSpecialist(serviceSpecialists);
@@ -99,7 +103,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                         service.getDescription(),
                         service.getBasePrice(),
                         service.getOptionalDescription(),
-                        service.getCategory().getCategoryName()
+                        service.getSubService().getName()
                 );
             } else {
                 return new ServiceAbstractDTO(
@@ -108,12 +112,12 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                         service.getDescription(),
                         service.getBasePrice(),
                         service.getOptionalDescription(),
-                        service.getCategory().getCategoryName()
+                        service.getSubService().getName()
                 );
             }
         } else {
             Service service = repository.getById(serviceDTO.getId());
-            Category category = categoryService.findCategoryByCategoryName(categoryName);
+            SubService subService = subServiceService.findSubServiceByName(categoryName);
 
             serviceDTO.setName(serviceName);
 
@@ -122,7 +126,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
             service.setBasePrice(serviceDTO.getBasePrice());
             service.setDescription(serviceDTO.getDescription());
             service.setOptionalDescription(serviceDTO.getOptionalDescription());
-            service.setCategory(category);
+            service.setSubService(subService);
 
             List<Long> specialistIds = new ArrayList<>();
             if (serviceDTO.getSpecialistId() != null) {
@@ -136,7 +140,6 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
 
                 service.getServiceSpecialist().clear();
                 for (Specialist specialist : specialists) {
-
                     ServiceSpecialist serviceSpecialist = new ServiceSpecialist();
                     serviceSpecialist.setSpecialist(specialist);
                     serviceSpecialist.setService(service);
@@ -155,7 +158,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                         service.getDescription(),
                         service.getBasePrice(),
                         service.getOptionalDescription(),
-                        service.getCategory().getCategoryName()
+                        service.getSubService().getName()
                 );
             } else {
                 return new ServiceAbstractDTO(
@@ -164,7 +167,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                         service.getDescription(),
                         service.getBasePrice(),
                         service.getOptionalDescription(),
-                        service.getCategory().getCategoryName()
+                        service.getSubService().getName()
                 );
             }
         }
@@ -172,8 +175,8 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
 
 
     @Override
-    public List<Service> fetchAllServices() {
-        return repository.findAll();
+    public List<ServiceDTO> fetchAllServices() {
+        return repository.fetchAllServicesDTO();
     }
 
     @Override
@@ -207,6 +210,9 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                 service.getServiceSpecialist().add(serviceSpecialist);
             }
         }
+
+        service = repository.save(service);
+
         Long[] ids = specialistIds.toArray(new Long[0]);
         if (ids.length == 0) {
             return new ServiceAbstractDTO(
@@ -215,7 +221,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                     service.getDescription(),
                     service.getBasePrice(),
                     service.getOptionalDescription(),
-                    service.getCategory().getCategoryName()
+                    service.getSubService().getName()
             );
         } else {
             return new ServiceAbstractDTO(
@@ -224,7 +230,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                     service.getDescription(),
                     service.getBasePrice(),
                     service.getOptionalDescription(),
-                    service.getCategory().getCategoryName()
+                    service.getSubService().getName()
             );
         }
     }
@@ -268,9 +274,19 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
                 service.getDescription(),
                 service.getBasePrice(),
                 service.getOptionalDescription(),
-                service.getCategory().getCategoryName()
+                service.getSubService().getName()
         );
     }
 
+    @Override
+    public List<Service> findSpecialistServices(Long id) {
+
+        return repository.findSpecialistServices(id);
+    }
+
+    @Override
+    public List<Service> findServiceBy(List<Long> ids) {
+        return repository.findServiceBy(ids);
+    }
 
 }

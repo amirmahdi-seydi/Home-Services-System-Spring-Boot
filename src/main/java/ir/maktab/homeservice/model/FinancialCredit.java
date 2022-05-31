@@ -24,5 +24,4 @@ public class FinancialCredit extends BaseEntity<Long> {
     @Column(name = "BALANCE")
     private BigDecimal balance;
 
-
 }

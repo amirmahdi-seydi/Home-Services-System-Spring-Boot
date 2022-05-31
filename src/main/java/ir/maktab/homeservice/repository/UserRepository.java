@@ -18,14 +18,14 @@ public interface UserRepository extends UserBaseRepository<User>, JpaSpecificati
 
     Boolean existsByUserName(String userName);
 
-    Boolean existsByEmailAddress(String email);
+    Boolean existsByEmail(String email);
 
     Boolean existsByMobileNumber(String phoneNumber);
 
     @Query("select u.userType from User u where u.userName = :userName")
     UserType findUserTypeByUserName(String userName);
 
-    @Query("select u.hashedPassword from User u where u.userName = ?1")
+    @Query("select u.password from User u where u.userName = ?1")
     byte[] findPassword(String userName);
 
 }

@@ -20,8 +20,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "o.id, o.jobDescription, o.bidPrice, o.orderState," +
             " o.dateAndTimeOfOrderRegistration, o.dateAndTimeOfJob, o.score," +
             " o.customer.userName, o.service.name, o.address)" +
-            " from Order o where o.orderState = :state  order by o.id")
+            " from Order o where o.orderState = :state order by o.id")
     List<SecureOrderDTO> fetchAllAvailableOrdersDTO(@Param("state") OrderState state);
 
+
+    @Query("select new ir.maktab.homeservice.service.dto.extra.SecureOrderDTO(" +
+            "o.id, o.jobDescription, o.bidPrice, o.orderState," +
+            " o.dateAndTimeOfOrderRegistration, o.dateAndTimeOfJob, o.score," +
+            " o.customer.userName, o.service.name, o.address)" +
+            " from Order o where o.service.name = :service order by o.id")
+    List<SecureOrderDTO> fetchOrdersByBaseService(@Param("service") String service);
 
 }

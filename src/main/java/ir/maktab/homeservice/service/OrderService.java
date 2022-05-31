@@ -22,5 +22,7 @@ public interface OrderService extends BaseService<Order, Long> {
 
     SecureOrderDTO chooseSpecialistOffer(OfferDTO offerDTO);
 
+    List<SecureOrderDTO> seeOrdersByBaseService();
+
     Comment addComment(CommentDTO commentDTO);
 }

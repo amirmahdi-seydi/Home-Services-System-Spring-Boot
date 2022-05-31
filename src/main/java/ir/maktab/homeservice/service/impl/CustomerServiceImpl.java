@@ -5,8 +5,6 @@ package ir.maktab.homeservice.service.impl;
 
 import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.exception.AlreadyExistException;
-import ir.maktab.homeservice.exception.NotFoundException;
-import ir.maktab.homeservice.exception.WrongCredentialsException;
 import ir.maktab.homeservice.model.Customer;
 import ir.maktab.homeservice.model.FinancialCredit;
 import ir.maktab.homeservice.model.User;
@@ -22,9 +20,7 @@ import ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO;
 
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -57,7 +53,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
 
             if (repository.existsByUserName(customerDTO.getUserName())) {
                 throw new AlreadyExistException("This user name already exist!");
-            } else if (repository.existsByEmailAddress(customerDTO.getEmailAddress())) {
+            } else if (repository.existsByEmail(customerDTO.getEmail())) {
                 throw new AlreadyExistException("This email already exist! ");
             } else if (repository.existsByMobileNumber(customerDTO.getMobileNumber())) {
                 throw new AlreadyExistException("This mobile number already exist");
@@ -71,10 +67,10 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
                 Customer customer = (Customer) userCustomer;
                 customer.setFirstName(customerDTO.getFirstName());
                 customer.setLastName(customerDTO.getLastName());
-                customer.setEmailAddress(customerDTO.getEmailAddress());
+                customer.setEmail(customerDTO.getEmail());
                 customer.setMobileNumber(customerDTO.getMobileNumber());
                 customer.setUserState(UserState.PENDING_CONFORMATION);
-                customer.setHashedPassword(CustomPasswordEncoder.hashPassword(customerDTO.getPassword()));
+                customer.setPassword(CustomPasswordEncoder.hashPassword(customerDTO.getPassword()));
                 customer.setDateOfRegistration(Date.from(Instant.now()));
                 customer.setUserName(customerDTO.getUserName());
                 customer.setFinancialCredit(financialCredit);
@@ -84,7 +80,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
                         customer.getId(),
                         customer.getFirstName(),
                         customer.getLastName(),
-                        customer.getEmailAddress(),
+                        customer.getEmail(),
                         customer.getIsActive(),
                         customer.getDateOfRegistration(),
                         customer.getUserName(),
@@ -106,7 +102,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
             Customer customer = repository.getById(customerDTO.getId());
             customer.setFirstName(customerDTO.getFirstName());
             customer.setLastName(customerDTO.getLastName());
-            customer.setEmailAddress(customerDTO.getEmailAddress());
+            customer.setEmail(customerDTO.getEmail());
             customer.setMobileNumber(customerDTO.getMobileNumber());
             customer.setUserState(UserState.PENDING_CONFORMATION);
             customer.setUserName(customerDTO.getUserName());
@@ -116,7 +112,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
                     customer.getId(),
                     customer.getFirstName(),
                     customer.getLastName(),
-                    customer.getEmailAddress(),
+                    customer.getEmail(),
                     customer.getIsActive(),
                     customer.getDateOfRegistration(),
                     customer.getUserName(),

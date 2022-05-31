@@ -39,8 +39,8 @@ public class Service extends BaseEntity<Long> {
     private String optionalDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CETEGORY_ID", nullable = false)
-    private Category category;
+    @JoinColumn(name = "SUB_SERVICE_ID", nullable = false)
+    private SubService subService;
 
     @OneToMany(mappedBy = "service",
             cascade = CascadeType.ALL)

@@ -45,19 +45,21 @@ public abstract class User extends BaseEntity<Long> {
             unique = true)
     private String userName;
 
-    @Column(name = "HASHED_PASSWORD",
+    @Column(name = "PASSWORD",
             nullable = false)
-    private byte[] hashedPassword;
+    private byte[] password;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @Column(name = "DATE_OF_REGISTRATION",
             nullable = false)
     private Date dateOfRegistration;
 
-    @Column(name = "EMAIL_ADDRESS",
+
+//    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
+    @Column(name = "EMAIL",
             nullable = false,
             unique = true)
-    private String emailAddress;
+    private String email;
 
     @Column(name = "MOBILE_NUMBER",
             nullable = false)

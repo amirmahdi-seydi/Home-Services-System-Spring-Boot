@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -213,6 +214,26 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, Long, OrderReposito
                 .id(order.getId())
                 .orderState(order.getOrderState())
                 .build();
+    }
+
+    @Override
+    public List<SecureOrderDTO> seeOrdersByBaseService() {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        User user = userService.findByUserName(userDetails.getUsername());
+
+        List<ir.maktab.homeservice.model.Service> services = serviceService.findSpecialistServices(user.getId());
+        List<SecureOrderDTO> orderDTOList = new ArrayList<>();
+        for (ir.maktab.homeservice.model.Service service : services) {
+            if (repository.fetchOrdersByBaseService(service.getName()).isEmpty()) {
+                throw new NotFoundException("No offer found with this id!");
+            }
+
+            orderDTOList.addAll(repository.fetchOrdersByBaseService(service.getName()));
+        }
+
+
+        return orderDTOList;
     }
 
     @Override

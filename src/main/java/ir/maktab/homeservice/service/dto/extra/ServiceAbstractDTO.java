@@ -4,7 +4,7 @@ package ir.maktab.homeservice.service.dto.extra;
  */
 
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +23,7 @@ public class ServiceAbstractDTO {
     private String description;
     private BigDecimal basePrice;
     private String optionalDescription;
-    private String categoryName;
+    private String subServiceName;
 
     public ServiceAbstractDTO(Long[] specialistId, String name) {
         this.specialistId = specialistId;
@@ -31,24 +31,24 @@ public class ServiceAbstractDTO {
     }
 
     public ServiceAbstractDTO(Long id, Long[] specialistId, String name, String description, BigDecimal basePrice,
-                              String optionalDescription, String categoryName) {
+                              String optionalDescription, String subServiceName) {
         this.id = id;
         this.specialistId = specialistId;
         this.name = name;
         this.description = description;
         this.basePrice = basePrice;
         this.optionalDescription = optionalDescription;
-        this.categoryName = categoryName;
+        this.subServiceName = subServiceName;
 
     }
 
     public ServiceAbstractDTO(Long id, String name, String description, BigDecimal basePrice,
-                              String optionalDescription, String categoryName) {
+                              String optionalDescription, String subServiceName) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.basePrice = basePrice;
         this.optionalDescription = optionalDescription;
-        this.categoryName = categoryName;
+        this.subServiceName = subServiceName;
     }
 }

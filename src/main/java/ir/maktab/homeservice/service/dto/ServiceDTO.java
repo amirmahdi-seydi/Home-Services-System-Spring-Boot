@@ -22,5 +22,5 @@ public class ServiceDTO {
     private String description;
     private BigDecimal basePrice;
     private String optionalDescription;
-    private String categoryName;
+    private String subServiceName;
 }

@@ -22,4 +22,8 @@ public class CustomPasswordEncoder {
         return encode.getBytes(StandardCharsets.UTF_8);
     }
 
+    public static Boolean matches(String oldPassword, String newPassword){
+       return encoder.matches(oldPassword, newPassword);
+    }
+
 }
