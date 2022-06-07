@@ -34,8 +34,8 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     List<Service> findServiceBy(List<Long> ids);
 
 
-
-
+    @Query("select s from Service s join Specialist sp where sp.speciality.name = s.subService.name and sp.id = :id")
+    List<Service> findServicesBySpecialistSkill(@Param("id") Long id);
 
 
 }

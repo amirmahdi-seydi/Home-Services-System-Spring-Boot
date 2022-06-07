@@ -4,6 +4,7 @@ package ir.maktab.homeservice.model.enumeration;
  */
 
 public enum TransactionType {
+
     ACCOUNT_CREDIT,
     CREDIT_CARD
 }

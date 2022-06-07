@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -35,8 +36,9 @@ public class Transaction extends BaseEntity<Long> {
             nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "TRANSACTION_TYPE",
-                     nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "TRANSACTION_TYPE", nullable = false)
+    @Type( type = "pgsql_enum" )
     private TransactionType transactionType;
 
     @Column(name = "UUID",

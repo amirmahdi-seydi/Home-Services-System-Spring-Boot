@@ -59,6 +59,15 @@ public class OrderController {
         return new ResponseEntity<>(orderService.seeOrdersByBaseService(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('specialist')")
+    @ResponseBody
+    @PutMapping("/changeOrderStatus/spe/{offerId}")
+    public ResponseEntity<SecureOrderDTO> changeOrderStatusBySpecialist(@PathVariable String offerId) {
+
+        return new ResponseEntity<>(orderService.changeOrderStatusBySpecialist(Long.valueOf(offerId)), HttpStatus.OK);
+
+    }
+
 
     @ResponseBody
     @PostMapping("/comment")
@@ -77,7 +86,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('admin') or hasRole('customer')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
+    public ResponseEntity<?> deleteOrder(@PathVariable String id) {
         try {
             orderService.deleteById(Long.valueOf(id));
             return ResponseEntity.noContent().build();

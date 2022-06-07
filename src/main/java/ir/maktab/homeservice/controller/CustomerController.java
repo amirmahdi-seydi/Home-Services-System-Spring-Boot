@@ -29,7 +29,7 @@ public class CustomerController {
 
     private final UserService userService;
 
-    @PreAuthorize("hasRole('customer') or hasRole('admin')")
+
     @ResponseBody
     @PostMapping("/save")
     public ResponseEntity<SecureCustomerDTO> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {

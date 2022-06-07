@@ -4,6 +4,7 @@ package ir.maktab.homeservice.controller;
  */
 
 import ir.maktab.homeservice.model.User;
+import ir.maktab.homeservice.service.UserActivationService;
 import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.dto.ResetPasswordDTO;
 import org.springframework.http.HttpStatus;
@@ -13,16 +14,21 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserActivationService userActivationService;
+
+    public UserController(UserService userService,
+                          UserActivationService userActivationService) {
         this.userService = userService;
+        this.userActivationService = userActivationService;
     }
 
     @PreAuthorize("hasRole('admin')")
@@ -38,6 +44,16 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<String> giveAccess(@PathVariable("userId") Long userId){
         return new ResponseEntity<>(userService.giveAccessByAdmin(userId), HttpStatus.OK);
+    }
+
+
+    @ResponseBody
+    @GetMapping("/confirm-account")
+    public ResponseEntity<Boolean> confirmAccount(@RequestParam Map<String, String> requestParam) {
+        String confirmation = requestParam.get("token");
+        String userId = requestParam.get("userId");
+        System.out.println(userId);
+        return new ResponseEntity<>(userActivationService.confirm(confirmation, userId), HttpStatus.OK);
     }
 
 

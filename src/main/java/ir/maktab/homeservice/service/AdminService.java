@@ -15,4 +15,6 @@ public interface AdminService extends BaseService<Admin, Long> {
     SecureAdminDTO save(AdminDTO adminDTO);
 
     List<SecureAdminDTO> fetchAllAdmins();
+
+
 }

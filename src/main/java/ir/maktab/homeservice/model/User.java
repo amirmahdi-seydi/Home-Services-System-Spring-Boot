@@ -54,8 +54,6 @@ public abstract class User extends BaseEntity<Long> {
             nullable = false)
     private Date dateOfRegistration;
 
-
-//    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")
     @Column(name = "EMAIL",
             nullable = false,
             unique = true)

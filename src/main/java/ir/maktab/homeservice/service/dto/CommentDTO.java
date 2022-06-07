@@ -19,4 +19,6 @@ public class CommentDTO {
     private Long id;
     private String commentBody;
     private Long orderId;
+    private Date dateAndTimeOfRegisterComment;
+    private String commentOwnerUserName;
 }

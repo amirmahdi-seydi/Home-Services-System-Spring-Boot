@@ -33,7 +33,7 @@ public class OrderDTO {
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date dateAndTimeOfJob;
-    private Double score;
+    private Double specialistScore;
     private String city;
     private String district;
     private String village;

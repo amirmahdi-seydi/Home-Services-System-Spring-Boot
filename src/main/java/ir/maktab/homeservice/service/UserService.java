@@ -3,6 +3,7 @@ package ir.maktab.homeservice.service;
  * created by Amir mahdi seydi 5/7/2022 11:33 AM
  */
 
+import ir.maktab.homeservice.model.Customer;
 import ir.maktab.homeservice.model.User;
 import ir.maktab.homeservice.model.enumeration.UserType;
 import ir.maktab.homeservice.service.base.BaseService;
@@ -42,6 +43,8 @@ public interface UserService extends BaseService<User, Long>{
     UserType findUserTypeByUserName(String userName);
 
     byte[] findPassWord(String userName);
+
+    void sendConfirmationLink(UserDTO user);
 
     List<User> findAll(String search);
 }

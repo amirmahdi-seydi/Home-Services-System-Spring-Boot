@@ -24,4 +24,10 @@ public class FinancialCredit extends BaseEntity<Long> {
     @Column(name = "BALANCE")
     private BigDecimal balance;
 
+    @OneToOne(mappedBy = "financialCredit")
+    private Customer customer;
+
+    @OneToOne(mappedBy = "financialCredit")
+    private Specialist specialist;
+
 }

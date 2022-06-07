@@ -58,8 +58,8 @@ public class Order extends BaseEntity<Long> {
             nullable = false)
     private Date dateAndTimeOfJob;
 
-    @Column(name = "SCORE")
-    private Double score;
+    @Column(name = "SPECIALIST_SCORE", nullable = false)
+    private Double specialistScore;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
@@ -70,7 +70,7 @@ public class Order extends BaseEntity<Long> {
     private Service service;
 
     @OneToMany(mappedBy = "order",
-            cascade = CascadeType.ALL)
+               cascade = CascadeType.ALL)
     private Set<Offer> offers;
 
     @OneToMany(cascade = CascadeType.ALL)

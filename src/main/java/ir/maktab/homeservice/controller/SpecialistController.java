@@ -5,6 +5,7 @@ package ir.maktab.homeservice.controller;
 
 
 import ir.maktab.homeservice.exception.NotFoundException;
+import ir.maktab.homeservice.model.Service;
 import ir.maktab.homeservice.service.SpecialistService;
 import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.dto.CustomerDTO;
@@ -13,6 +14,7 @@ import ir.maktab.homeservice.service.dto.SpecialistDTO;
 import ir.maktab.homeservice.service.dto.SpecialistServiceDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureSpecialistDTO;
+import ir.maktab.homeservice.service.dto.extra.SpecialistAbstractDTO;
 import ir.maktab.homeservice.service.dto.extra.request.ChangePasswordDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,18 +41,18 @@ public class SpecialistController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('specialist')")
+
     @ResponseBody
     @PostMapping("/save")
-    public ResponseEntity<SecureSpecialistDTO> registerSpecialist(@Valid @RequestBody SpecialistDTO specialistDTO) {
+    public ResponseEntity<SecureSpecialistDTO> registerSpecialist(@Valid @RequestBody SpecialistAbstractDTO specialistDTO) {
         return new ResponseEntity<>(specialistService.save(specialistDTO), HttpStatus.OK);
     }
 
 
-   @PreAuthorize("hasRole('specialist') or hasRole('admin')")
+    @PreAuthorize("hasRole('specialist') or hasRole('admin')")
     @ResponseBody
     @PutMapping("/update")
-    public ResponseEntity<SecureSpecialistDTO> updateSpecialist(@Valid @RequestBody SpecialistDTO specialistDTO) {
+    public ResponseEntity<SecureSpecialistDTO> updateSpecialist(@Valid @RequestBody SpecialistAbstractDTO specialistDTO) {
         return new ResponseEntity<>(specialistService.save(specialistDTO), HttpStatus.OK);
     }
 
@@ -59,6 +61,21 @@ public class SpecialistController {
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
         return new ResponseEntity<>(userService.changePassword(changePasswordDTO), HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('specialist')")
+    @ResponseBody
+    @PutMapping("/addService/specialist")
+    public ResponseEntity<SpecialistAbstractDTO> addServiceToSpecialistSkills(@Valid @RequestBody SpecialistAbstractDTO specialistAbstractDTO) {
+        return new ResponseEntity<>(specialistService.addServiceToSpecialistSkills(specialistAbstractDTO), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('specialist')")
+    @ResponseBody
+    @PutMapping("/viewSpecialist/spe/{specialistId}")
+    public ResponseEntity<List<Service>> viewSpecialistSpeciality(@PathVariable String specialistId) {
+        return new ResponseEntity<>(specialistService.findServicesBySpecialistSkill(Long.valueOf(specialistId)), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('admin')")
@@ -70,11 +87,10 @@ public class SpecialistController {
     @PreAuthorize("hasRole('specialist') or hasRole('admin')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteSpecialist(@PathVariable String id) {
-        try{
+        try {
             specialistService.deleteById(Long.valueOf(id));
             return ResponseEntity.noContent().build();
-        }
-        catch (NotFoundException e){
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

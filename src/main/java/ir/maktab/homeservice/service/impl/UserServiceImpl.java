@@ -8,6 +8,7 @@ import ir.maktab.homeservice.config.CustomAuthenticationProvider;
 import ir.maktab.homeservice.config.JwtUtil;
 import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.config.security.MyUserDetailsService;
+import ir.maktab.homeservice.exception.AccountNotActiveException;
 import ir.maktab.homeservice.exception.NotFoundException;
 import ir.maktab.homeservice.exception.UnacceptableException;
 import ir.maktab.homeservice.model.User;
@@ -16,6 +17,7 @@ import ir.maktab.homeservice.model.enumeration.UserType;
 import ir.maktab.homeservice.model.specification.GenericSpecificationsBuilder;
 import ir.maktab.homeservice.model.specification.UserSpecification;
 import ir.maktab.homeservice.repository.UserRepository;
+import ir.maktab.homeservice.service.UserActivationService;
 import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.ResetPasswordDTO;
@@ -24,19 +26,21 @@ import ir.maktab.homeservice.service.dto.extra.SecureUserDTO;
 import ir.maktab.homeservice.service.dto.extra.request.AuthenticationRequestDTO;
 import ir.maktab.homeservice.service.dto.extra.request.AuthenticationResponseDTO;
 import ir.maktab.homeservice.service.dto.extra.request.ChangePasswordDTO;
+import ir.maktab.homeservice.util.ConformationToken;
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
 import ir.maktab.homeservice.util.SearchOperation;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +50,7 @@ import java.util.regex.Pattern;
 public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
         implements UserService {
 
+    private final UserActivationService userActivationService;
 
     private final MyUserDetailsService myUserDetailsService;
 
@@ -54,9 +59,11 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
     private final JwtUtil jwtUtil;
 
     public UserServiceImpl(UserRepository repository,
+                           @Lazy UserActivationService userActivationService,
                            @Lazy MyUserDetailsService myUserDetailsService,
                            @Lazy CustomAuthenticationProvider customAuthenticationProvider) {
         super(repository);
+        this.userActivationService = userActivationService;
         this.myUserDetailsService = myUserDetailsService;
         this.customAuthenticationProvider = customAuthenticationProvider;
         this.jwtUtil = new JwtUtil();
@@ -130,7 +137,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
     }
 
     @Override
-        public AuthenticationResponseDTO loginRequest(AuthenticationRequestDTO authenticationRequestDTO) {
+    public AuthenticationResponseDTO loginRequest(AuthenticationRequestDTO authenticationRequestDTO) {
         customAuthenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequestDTO.getUsername(),
@@ -141,6 +148,15 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
                 loadUserByUsername(authenticationRequestDTO.getUsername());
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
         String generatedJWT = jwtUtil.generateToken(customUserDetails);
+
+        if (!customUserDetails.getUser().getIsActive()){
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserName(customUserDetails.getUser().getUserName());
+            userDTO.setEmailAddress(customUserDetails.getUser().getEmail());
+            userDTO.setId(customUserDetails.getUser().getId());
+            sendConfirmationLink(userDTO);
+            throw new AccountNotActiveException("Account not active yet!");
+        }
 
         return new AuthenticationResponseDTO(generatedJWT, new SecureUserDTO(
                 customUserDetails.getUser().getId(),
@@ -218,4 +234,18 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long, UserRepository>
         Specification<User> spec = builder.build(UserSpecification::new);
         return repository.findAll(spec);
     }
+
+
+    @Override
+    public void sendConfirmationLink(UserDTO user) {
+        ConformationToken conformationTokenDTO = new ConformationToken();
+        conformationTokenDTO.setConfirmationToken(UUID.randomUUID().toString());
+        conformationTokenDTO.setDate(Date.from(Instant.now()));
+        conformationTokenDTO.setUserDTO(user);
+
+        userActivationService.sendActivationCode(conformationTokenDTO);
+    }
+
+
+
 }

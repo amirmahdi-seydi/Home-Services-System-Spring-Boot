@@ -6,6 +6,7 @@ package ir.maktab.homeservice.service;
 import ir.maktab.homeservice.model.Customer;
 import ir.maktab.homeservice.service.base.BaseService;
 import ir.maktab.homeservice.service.dto.CustomerDTO;
+import ir.maktab.homeservice.service.dto.extra.PaymentDetailDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO;
 
 import java.util.List;

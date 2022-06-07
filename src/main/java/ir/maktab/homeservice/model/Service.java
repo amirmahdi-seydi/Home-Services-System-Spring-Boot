@@ -43,7 +43,7 @@ public class Service extends BaseEntity<Long> {
     private SubService subService;
 
     @OneToMany(mappedBy = "service",
-            cascade = CascadeType.ALL)
+               cascade = CascadeType.ALL)
     private Set<Order> orders;
 
     @OneToMany(mappedBy = "service",

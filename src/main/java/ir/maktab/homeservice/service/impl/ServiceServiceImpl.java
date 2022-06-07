@@ -16,6 +16,7 @@ import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.ServiceDTO;
 import ir.maktab.homeservice.service.dto.extra.ServiceAbstractDTO;
 import ir.maktab.homeservice.service.dto.extra.SpecialistAbstractDTO;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -34,7 +35,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
 
     public ServiceServiceImpl(ServiceRepository repository,
                               SubServiceService subServiceService,
-                              SpecialistService specialistService,
+                              @Lazy SpecialistService specialistService,
                               UserService userService) {
         super(repository);
         this.subServiceService = subServiceService;
@@ -45,7 +46,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
     @Override
     public ServiceAbstractDTO save(ServiceAbstractDTO serviceDTO) {
         String serviceName = serviceDTO.getName().trim().replaceAll("\\s+", " ").toUpperCase();
-        String categoryName = serviceDTO.getSubServiceName().trim().replaceAll("\\s+", " ").toUpperCase();
+        String subServiceName = serviceDTO.getSubServiceName().trim().replaceAll("\\s+", " ").toUpperCase();
 
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
@@ -55,16 +56,16 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
             throw new AccessDeniedException("Access denied!");
         }
 
-        if (!subServiceService.existBySubServiceName(categoryName)) {
-            throw new NotFoundException("Service not found!");
+        if (!subServiceService.existBySubServiceName(subServiceName)) {
+            throw new NotFoundException("SubService not found!");
         }
 
         if (serviceDTO.getId() == null) {
             if (repository.existsByName(serviceName)) {
-                throw new AlreadyExistException("This SubService already define!");
+                throw new AlreadyExistException("This Service already define!");
             }
 
-            SubService subService = subServiceService.findSubServiceByName(categoryName);
+            SubService subService = subServiceService.findSubServiceByName(subServiceName);
 
             serviceDTO.setName(serviceName);
 
@@ -117,7 +118,7 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
             }
         } else {
             Service service = repository.getById(serviceDTO.getId());
-            SubService subService = subServiceService.findSubServiceByName(categoryName);
+            SubService subService = subServiceService.findSubServiceByName(subServiceName);
 
             serviceDTO.setName(serviceName);
 
@@ -287,6 +288,13 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, Long, ServiceRe
     @Override
     public List<Service> findServiceBy(List<Long> ids) {
         return repository.findServiceBy(ids);
+    }
+
+
+
+    @Override
+    public List<Service> findServicesBySpecialistSkill(Long id) {
+        return repository.findServicesBySpecialistSkill(id);
     }
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "SPECIALIST_SERVICE")
 public class ServiceSpecialist extends BaseEntity<Long> {

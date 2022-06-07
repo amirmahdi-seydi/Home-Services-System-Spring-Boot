@@ -15,9 +15,6 @@ import java.util.Date;
 
 
 @Builder
-//@AllArgsConstructor(access = AccessLevel.PACKAGE)
-//@NoArgsConstructor(access = AccessLevel.PACKAGE)
-//@Setter(value = AccessLevel.PACKAGE)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -29,7 +26,7 @@ public class SecureOrderDTO {
     private OrderState orderState;
     private Date dateAndTimeOfOrderRegistration;
     private Date dateAndTimeOfJob;
-    private Double score;
+    private Double specialistScore;
     private String customerName;
     private String serviceName;
     private Address address;

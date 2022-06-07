@@ -40,6 +40,9 @@ public class Specialist extends User {
             cascade = CascadeType.ALL)
     private Set<Transaction> transactions;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SPECIALITY_ID")
+    private SubService speciality;
 
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "financial_credit_id", referencedColumnName = "id")

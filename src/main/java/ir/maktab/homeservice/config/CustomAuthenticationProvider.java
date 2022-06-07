@@ -41,20 +41,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
         System.out.println(userDetails.getAuthorities());
-        if (userDetails.isEnabled()) {
-            if (passwordEncoder.matches(password, userDetails.getPassword())) {
-                return new UsernamePasswordAuthenticationToken(
-                        username,
-                        password,
-                        userDetails.getAuthorities()
-                );
 
-            } else {
-                throw new WrongCredentialsException("Username or password is incorrect!");
-            }
+        if (passwordEncoder.matches(password, userDetails.getPassword())) {
+            return new UsernamePasswordAuthenticationToken(
+                    username,
+                    password,
+                    userDetails.getAuthorities()
+            );
+
         } else {
-            throw new AccountNotActiveException("Your account is not active yet!");
+            throw new WrongCredentialsException("Username or password is incorrect!");
         }
+
     }
 
     @Override

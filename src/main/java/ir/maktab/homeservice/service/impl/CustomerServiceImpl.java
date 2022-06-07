@@ -5,17 +5,13 @@ package ir.maktab.homeservice.service.impl;
 
 import ir.maktab.homeservice.config.security.CustomUserDetails;
 import ir.maktab.homeservice.exception.AlreadyExistException;
-import ir.maktab.homeservice.model.Customer;
-import ir.maktab.homeservice.model.FinancialCredit;
-import ir.maktab.homeservice.model.User;
-import ir.maktab.homeservice.model.UserFactory;
+import ir.maktab.homeservice.model.*;
 import ir.maktab.homeservice.model.enumeration.UserState;
 import ir.maktab.homeservice.repository.CustomerRepository;
-import ir.maktab.homeservice.service.CustomerService;
-import ir.maktab.homeservice.service.FinancialCreditService;
-import ir.maktab.homeservice.service.UserService;
+import ir.maktab.homeservice.service.*;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.CustomerDTO;
+import ir.maktab.homeservice.service.dto.UserDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureCustomerDTO;
 
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
@@ -28,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -39,10 +36,14 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
     private final UserService userService;
 
 
-    public CustomerServiceImpl(CustomerRepository repository, FinancialCreditService financialCreditService, UserService userService) {
+    public CustomerServiceImpl(CustomerRepository repository,
+                               FinancialCreditService financialCreditService,
+                               UserService userService
+    ) {
         super(repository);
         this.financialCreditService = financialCreditService;
         this.userService = userService;
+
     }
 
     @Override
@@ -75,6 +76,12 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
                 customer.setUserName(customerDTO.getUserName());
                 customer.setFinancialCredit(financialCredit);
                 customer = repository.save(customer);
+
+                UserDTO userDTO = new UserDTO();
+                userDTO.setUserName(customer.getUserName());
+                userDTO.setEmailAddress(customer.getEmail());
+                userDTO.setId(customer.getId());
+                userService.sendConfirmationLink(userDTO);
 
                 return new SecureCustomerDTO(
                         customer.getId(),
@@ -121,6 +128,7 @@ public class CustomerServiceImpl extends BaseServiceImpl<Customer, Long, Custome
             );
         }
     }
+
 
     @Override
     public List<SecureCustomerDTO> fetchAllCustomer() {

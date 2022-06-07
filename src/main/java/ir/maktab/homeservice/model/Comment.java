@@ -27,6 +27,9 @@ public class Comment extends BaseEntity<Long> {
     @Column(name = "COMMENT_BODY")
     private String commentBody;
 
+    @Column(name = "COMMENT_OWNER")
+    private String commentOwner;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @Column(name = "DATE_AND_TIME_OF_REGISTER_COMMENT",
             nullable = false)

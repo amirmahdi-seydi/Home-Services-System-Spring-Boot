@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 public class ErrorDTO {
+
     private final String message;
     private final HttpStatus httpStatus;
     private final ZonedDateTime timeStamp;

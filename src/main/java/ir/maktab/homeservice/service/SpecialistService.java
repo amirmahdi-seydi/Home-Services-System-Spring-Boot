@@ -11,6 +11,7 @@ import ir.maktab.homeservice.service.dto.ServiceDTO;
 import ir.maktab.homeservice.service.dto.SpecialistDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureSpecialistDTO;
 import ir.maktab.homeservice.service.dto.extra.SpecialistAbstractDTO;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public interface SpecialistService extends BaseService<Specialist, Long> {
     User findByUserName(String userName);
 
     Boolean existsByUserName(String userName);
+
+    List<Service> findServicesBySpecialistSkill(Long id);
 
     List<Specialist> findSpecialistBy(List<Long> ids);
 

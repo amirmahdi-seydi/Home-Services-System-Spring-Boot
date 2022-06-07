@@ -16,6 +16,7 @@ import ir.maktab.homeservice.service.SpecialistService;
 import ir.maktab.homeservice.service.UserService;
 import ir.maktab.homeservice.service.base.BaseServiceImpl;
 import ir.maktab.homeservice.service.dto.ServiceDTO;
+import ir.maktab.homeservice.service.dto.UserDTO;
 import ir.maktab.homeservice.service.dto.extra.SecureSpecialistDTO;
 import ir.maktab.homeservice.service.dto.extra.SpecialistAbstractDTO;
 import ir.maktab.homeservice.util.CustomPasswordEncoder;
@@ -82,6 +83,12 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
                 specialist.setUserName(specialistDTO.getUserName());
                 specialist.setFinancialCredit(financialCredit);
                 specialist = repository.save(specialist);
+
+                UserDTO userDTO = new UserDTO();
+                userDTO.setId(specialist.getId());
+                userDTO.setUserName(specialist.getUserName());
+                userDTO.setEmailAddress(specialist.getEmail());
+                userService.sendConfirmationLink(userDTO);
 
 
                 //TODO, commit msg  Add Feature to specialist can see the services and select between them
@@ -191,7 +198,6 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
         return profileImage;
     }
 
-
     @Override
     public SpecialistAbstractDTO addServiceToSpecialistSkills(SpecialistAbstractDTO specialistAbstractDTO) {
 
@@ -201,33 +207,38 @@ public class SpecialistServiceImpl extends BaseServiceImpl<Specialist, Long, Spe
 
         Specialist specialist = repository.findByUserName(specialistAbstractDTO.getUserName());
 
-        Service service;
         List<Long> servicesIds = new ArrayList<>();
         if (specialistAbstractDTO.getServicesId() != null) {
-            servicesIds = Arrays.asList(specialistAbstractDTO.getServicesId());
 
             List<Service> services = serviceService.findServiceBy(
                     Arrays.asList(specialistAbstractDTO.getServicesId())
             );
 
-            HashSet<ServiceSpecialist> serviceSpecialists = new HashSet<>();
+            Set<ServiceSpecialist> serviceSpecialists = specialist.getServiceSpecialist();
 
-            for (Service serv : services) {
+            for (Service service : services) {
                 ServiceSpecialist serviceSpecialist = new ServiceSpecialist();
-                serviceSpecialist.setService(serv);
+                serviceSpecialist.setService(service);
                 serviceSpecialist.setSpecialist(specialist);
                 if (specialist.getServiceSpecialist().contains(serviceSpecialist)) {
                     continue;
                 }
                 serviceSpecialists.add(serviceSpecialist);
             }
+            specialist.setServiceSpecialist(serviceSpecialists);
 
             specialist = repository.save(specialist);
 
         }
 
-        return null;
+            return SpecialistAbstractDTO.builder()
+                    .id(specialist.getId()).build();
+
     }
 
 
+    @Override
+    public List<Service> findServicesBySpecialistSkill(Long id) {
+        return serviceService.findServicesBySpecialistSkill(id);
+    }
 }

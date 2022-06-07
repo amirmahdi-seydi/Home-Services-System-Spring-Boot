@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @CrossOrigin
-public class LoginController {
+public class AuthenticationController {
 
     private final UserService userService;
 
-    public LoginController(UserService userService) {
+    public AuthenticationController(UserService userService) {
         this.userService = userService;
     }
 

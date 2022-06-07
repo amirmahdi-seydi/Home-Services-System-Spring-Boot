@@ -13,4 +13,6 @@ public interface FinancialCreditService extends BaseService<FinancialCredit, Lon
 
     FinancialCredit rechargeFinancialCredit(BigDecimal amount);
 
+
+
 }

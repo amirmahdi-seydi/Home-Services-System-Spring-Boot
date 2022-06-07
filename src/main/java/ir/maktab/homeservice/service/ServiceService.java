@@ -27,6 +27,8 @@ public interface ServiceService extends BaseService<Service, Long> {
 
     List<Service> findSpecialistServices(Long id);
 
+    List<Service> findServicesBySpecialistSkill(Long id);
+
     List<Service> findServiceBy(List<Long> ids);
 
 
