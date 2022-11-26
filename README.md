@@ -1,2 +1,2 @@
-# Home-Services-Sysytem-Spring-Boot
+# Home-Services-System-Spring-Boot
 Home services system application
